@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-export default function useGetAPIMarkdownOnLoad() {
-  const [md, setMd] = useState();
+export default function useGetRawAPIMd(reload) {
+  const [md, setMd] = useState({});
 
   useEffect(() => {
     const getStaticMd = () =>
@@ -9,7 +9,7 @@ export default function useGetAPIMarkdownOnLoad() {
         .then((res) => res.json())
         .then(setMd);
     getStaticMd();
-  }, []);
+  }, [reload]);
 
   return [md, setMd];
 }

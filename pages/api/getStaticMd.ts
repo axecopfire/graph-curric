@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import glob from "glob";
 import path from "path";
 
-const getMarkdownFileNames = (root = "content/") =>
+const getMarkdownFileNames = (root = "content/"): any =>
   new Promise((resolve, reject) =>
     glob(
       `${root}*.md`,
@@ -12,7 +12,7 @@ const getMarkdownFileNames = (root = "content/") =>
   );
 
 async function handler(req, res) {
-  const result = {};
+  const result: any = {};
   const cwd = process.cwd();
   const fileNames = await getMarkdownFileNames();
 
