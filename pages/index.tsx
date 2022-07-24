@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React from "react";
-import useGetAPIMarkdownOnLoad from "../hooks/useGetRawAPIMD";
+import useGetAPIMarkdownOnLoad from "../hooks/useGetRawAPIMd";
 import useRenderRawMd from "../hooks/useRenderRawMd";
 
 export default function Home() {

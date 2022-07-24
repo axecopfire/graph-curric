@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function useGetRawAPIMd(reload) {
+export default function useGetRawAPIMd(reload?: any) {
   const [md, setMd] = useState({});
 
   useEffect(() => {
