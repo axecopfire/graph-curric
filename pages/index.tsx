@@ -4,6 +4,7 @@ import styles from "../styles/Home.module.css";
 import React from "react";
 import useGetAPIMarkdownOnLoad from "../hooks/useGetRawAPIMd";
 import useRenderRawMd from "../hooks/useRenderRawMd";
+import Flow from "../components/Flow";
 
 export default function Home() {
   const [apiMd] = useGetAPIMarkdownOnLoad();
@@ -18,6 +19,16 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <div
+          style={{
+            width: "50vw",
+            height: "250px",
+            border: "2px solid gray",
+            borderRadius: "10px",
+          }}
+        >
+          <Flow />
+        </div>
         <pre>{JSON.stringify(renderedMd, null, 4)}</pre>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
