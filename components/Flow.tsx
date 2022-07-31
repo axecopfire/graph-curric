@@ -37,7 +37,7 @@ function Flow() {
       edges={edges}
       fitView={true}
 
-      // onNodesChange={onNodesChange}
+      // onNodesChange={onNodsetNodesesChange}
       // onEdgesChange={onEdgesChange}
       // onConnect={onConnect}
     >

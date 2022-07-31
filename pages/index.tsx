@@ -30,10 +30,20 @@ export default function Home() {
           <Flow />
         </div>
         <pre>{JSON.stringify(renderedMd, null, 4)}</pre>
+        {Object.keys(renderedMd).map((md, i) => (
+          <div
+            style={{
+              border: "2px solid lightgray",
+              padding: "10px",
+              margin: "10px",
+            }}
+            dangerouslySetInnerHTML={{ __html: renderedMd[md].markdown }}
+            key={i}
+          ></div>
+        ))}
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
-
         <p className={styles.description}>
           Get started by editing{" "}
           <code className={styles.code}>pages/index.js</code>
