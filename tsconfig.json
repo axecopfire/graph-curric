@@ -17,13 +17,14 @@
     "moduleResolution": "node",
     "module": "esnext",
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "resolveJsonModule": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/api/getStaticMd.test.js"  ],
+    "**/*.tsx",
+  ],
   "exclude": [
     "node_modules"
   ]
