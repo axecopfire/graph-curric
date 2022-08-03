@@ -3,7 +3,7 @@ import process from "process";
 import fs from "fs/promises";
 import path from "path";
 
-type RawMdDataType = { fileName: string; markdown: string }[];
+export type RawMdDataType = { fileName: string; rawMd: string }[];
 
 export const getMarkdownFileNames = (root = "content/"): Promise<string[]> =>
   new Promise((resolve, reject) =>
@@ -25,7 +25,7 @@ export const getStaticMd = async (root?: string) => {
     });
     result.push({
       fileName,
-      markdown: md,
+      rawMd: md,
     });
   }
 

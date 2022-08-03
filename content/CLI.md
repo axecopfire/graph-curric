@@ -1,5 +1,6 @@
 ---
 Title: CLI
+id: cli
 Author: Ray Villalobos
 Date: January 6, 2016
 heroimage: "http://i.imgur.com/rBX9z0k.png"

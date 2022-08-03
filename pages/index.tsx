@@ -2,13 +2,12 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React from "react";
-import useGetAPIMarkdownOnLoad from "../hooks/useGetRawAPIMd";
-import useRenderRawMd from "../hooks/useRenderRawMd";
+
+import useHandleMd from "../hooks/useHandleMd";
 import Flow from "../components/Flow";
 
 export default function Home() {
-  const [apiMd] = useGetAPIMarkdownOnLoad();
-  const [renderedMd] = useRenderRawMd(apiMd);
+  const { md, setMd } = useHandleMd();
 
   return (
     <div className={styles.container}>
@@ -27,10 +26,10 @@ export default function Home() {
             borderRadius: "10px",
           }}
         >
-          <Flow />
+          {md.nodes && md.edges ? <Flow md={md} /> : ""}
         </div>
-        <pre>{JSON.stringify(renderedMd, null, 4)}</pre>
-        {Object.keys(renderedMd).map((md, i) => (
+        <pre>{JSON.stringify(md, null, 4)}</pre>
+        {/* {Object.keys(renderedMd).map((md, i) => (
           <div
             style={{
               border: "2px solid lightgray",
@@ -40,7 +39,7 @@ export default function Home() {
             dangerouslySetInnerHTML={{ __html: renderedMd[md].markdown }}
             key={i}
           ></div>
-        ))}
+        ))} */}
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>

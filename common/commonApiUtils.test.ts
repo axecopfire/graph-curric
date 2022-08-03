@@ -3,7 +3,7 @@ import { getMarkdownFileNames, getStaticMd } from "./commonApiUtils";
 const testMdMocks = [
   {
     fileName: "__mocks__/test.md",
-    markdown:
+    rawMd:
       "---\r\n" +
       "Title: Test\r\n" +
       "Author: Schuster Braun\r\n" +

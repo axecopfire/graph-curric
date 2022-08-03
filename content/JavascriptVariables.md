@@ -1,6 +1,7 @@
 ---
 Title: JS-Variables
-prereq: cli
+id: jsVars
+prereq: cli,gitCli
 Author: Ray Villalobos
 Date: January 6, 2016
 heroimage: "http://i.imgur.com/rBX9z0k.png"
