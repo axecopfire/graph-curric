@@ -35,23 +35,16 @@ import ReactFlow, {
 //   { id: "e2-3", source: "2", target: "3", animated: true },
 // ];
 
-function Flow({ md }) {
-  const [nodes, setNodes, onNodesChange] = useNodesState(md.nodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(md.edges);
-
-  useEffect(() => {
-    setNodes(md.nodes);
-    setEdges(md.edges);
-  }, [md]);
-
-  console.log(md);
+function Flow({ md: { nodes, edges } }) {
+  // const [nodes, setNodes, onNodesChange] = useNodesState(md.nodes);
+  // const [edges, setEdges, onEdgesChange] = useEdgesState(md.edges);
 
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
+      // onNodesChange={onNodesChange}
+      // onEdgesChange={onEdgesChange}
       fitView={true}
 
       // onNodesChange={onNodeChange}

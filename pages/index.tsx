@@ -8,6 +8,7 @@ import Flow from "../components/Flow";
 
 export default function Home() {
   const { md, setMd } = useHandleMd();
+  console.log({ md });
 
   return (
     <div className={styles.container}>
@@ -28,7 +29,7 @@ export default function Home() {
         >
           {md.nodes && md.edges ? <Flow md={md} /> : ""}
         </div>
-        <pre>{JSON.stringify(md, null, 4)}</pre>
+        {/* <pre>{JSON.stringify(md, null, 4)}</pre> */}
         {/* {Object.keys(renderedMd).map((md, i) => (
           <div
             style={{

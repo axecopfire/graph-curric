@@ -5,7 +5,9 @@ import path from "path";
 
 export type RawMdDataType = { fileName: string; rawMd: string }[];
 
-export const getMarkdownFileNames = (root = "content/"): Promise<string[]> =>
+export const getMarkdownFileNames = (
+  root = "public/content/"
+): Promise<string[]> =>
   new Promise((resolve, reject) =>
     glob(
       `${root}*.md`,

@@ -87,10 +87,10 @@ export const rawMdToFlow = (mdList) => {
           id: `e-${req}-${id}`,
           source: req,
           target: id,
+          animated: true,
         });
       });
     }
   }
-
   return { nodes, edges };
 };
