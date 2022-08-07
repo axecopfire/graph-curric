@@ -65,15 +65,30 @@ export const renderRawMd = (rawMdList: RawMdDataType) => {
   });
 };
 
-export const rawMdToFlow = (mdList) => {
+type ConfigType = {
+  source: "json" | "md";
+};
+
+export const buildFlow = (dataList, config: ConfigType) => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
   let y = 25;
   let counter = 0;
-  for (const md of mdList) {
+  for (const data of dataList) {
     counter++;
-    const { prereq, title, id } = md?.meta;
+    let prereq, title, id;
+
+    if (config.source === "md") {
+      prereq = data?.meta.prereq;
+      title = data?.meta.title;
+      id = data?.meta.id;
+    }
+    if (config.source === "json") {
+      prereq = data.prereqList.split(",");
+      title = data.title;
+      id = data.id;
+    }
     nodes.push({
       id,
       data: { label: title },
@@ -93,4 +108,12 @@ export const rawMdToFlow = (mdList) => {
     }
   }
   return { nodes, edges };
+};
+
+export const rawJsonToFlow = (jsonList) => {
+  return buildFlow(jsonList, { source: "json" });
+};
+
+export const rawMdToFlow = (mdList) => {
+  return buildFlow(mdList, { source: "md" });
 };

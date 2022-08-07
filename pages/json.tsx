@@ -1,23 +1,32 @@
 import Head from "next/head";
 import { useReducer, useState } from "react";
 import styles from "../styles/Json.module.css";
+import Flow, { initialNodes, initialEdges } from "../components/Flow";
+import { rawJsonToFlow } from "../common/commonBrowserUtils";
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "ADD_LESSON":
-      return { ...state, lessons: [...state.lessons, action.lesson] };
+      return [...state, action.lesson];
     case "UPDATE_TEXTAREA":
       return action.value;
   }
 };
 
-const initialState = {
-  lessons: [],
-};
+const convertStateToFlow = (state) => {};
+
+interface IMd {
+  nodes: any[] | boolean;
+  edges: any[] | boolean;
+}
 
 export default function JSONBuilder() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, []);
   const [numberOfLessons, setNumberOfLessons] = useState(1);
+  const [md, setMd] = useState<IMd>({
+    nodes: false,
+    edges: false,
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,6 +47,10 @@ export default function JSONBuilder() {
       type: "UPDATE_TEXTAREA",
       value: JSON.parse(e.target.value),
     });
+  };
+
+  const handleRender = () => {
+    return setMd(rawJsonToFlow(state));
   };
   return (
     <div>
@@ -88,6 +101,8 @@ export default function JSONBuilder() {
           onChange={handleTextAreaChange}
           value={JSON.stringify(state, null, 4)}
         ></textarea>
+        <button onClick={() => handleRender()}>Render</button>
+        <Flow md={md} />
       </main>
     </div>
   );

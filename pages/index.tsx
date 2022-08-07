@@ -19,16 +19,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <div
-          style={{
-            width: "50vw",
-            height: "250px",
-            border: "2px solid gray",
-            borderRadius: "10px",
-          }}
-        >
-          {md.nodes && md.edges ? <Flow md={md} /> : ""}
-        </div>
+        <Flow md={md} />
         {/* <pre>{JSON.stringify(md, null, 4)}</pre> */}
         {/* {Object.keys(renderedMd).map((md, i) => (
           <div
