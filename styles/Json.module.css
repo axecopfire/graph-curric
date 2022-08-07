@@ -1,0 +1,13 @@
+.main label {
+  display:block;
+  padding: 10px;
+}
+
+.main fieldset {
+  width: 50%;
+  border-radius: 5px;
+}
+
+.main input,.main textarea {
+  display:block;
+}
