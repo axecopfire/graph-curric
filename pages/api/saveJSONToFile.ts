@@ -5,12 +5,15 @@ import { getRootContentFilePath } from "../../common/commonApiUtils";
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log("--->", req.query);
-  const fileName = req.query?.fileName;
-  const data = req.query?.data;
+  const { updateConfirmed, data, fileName } = req.query;
 
-  if (Array.isArray(fileName) || Array.isArray(data)) {
+  // TS makin me mad
+  const fixTypeScript = Object.values(req.query).filter((prop) =>
+    Array.isArray(prop)
+  );
+  if (fixTypeScript.length) {
     const eMsg = "Somehow we hit this weird error";
-    console.error(eMsg, fileName, data);
+    console.error(eMsg, fileName);
     return res
       .status(400)
       .send(
@@ -31,7 +34,7 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const regexNoPathCharacters = /(\.|\\|\/|\,)/g;
-  if (regexNoPathCharacters.test(fileName)) {
+  if (regexNoPathCharacters.test(fileName as string)) {
     const eMsg = "File name can not contain \\,/,.,,";
     console.error(eMsg);
     return res.status(400).send(eMsg);
@@ -46,11 +49,11 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
     fileExists = false;
   }
 
-  if (fileExists) {
-    return res.status(400).send("File already exists");
+  if (fileExists && updateConfirmed !== "true") {
+    return res.status(409).send("File already exists");
   }
 
-  fs.writeFileSync(fp, data);
+  fs.writeFileSync(fp, data as string);
 
   console.debug("File saved successfully");
 

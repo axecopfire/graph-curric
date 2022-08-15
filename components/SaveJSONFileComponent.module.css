@@ -6,3 +6,20 @@
   display:block;
   color: tomato;
 }
+
+.warning {
+  border-color: orange;
+}
+
+.loading {
+  animation: color-changer 2s ease-in-out infinite alternate;
+}
+
+@keyframes color-changer {
+  0% {
+    border-color: purple;
+  }
+  100% {
+    border-color: orange;
+  }
+}
