@@ -1,0 +1,8 @@
+.error {
+  border-color: tomato;
+}
+
+.error p {
+  display:block;
+  color: tomato;
+}

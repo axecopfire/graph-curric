@@ -2,6 +2,7 @@ import Head from "next/head";
 import { useReducer, useState } from "react";
 import styles from "../styles/Json.module.css";
 import Flow, { initialNodes, initialEdges } from "../components/Flow";
+import SaveJSONFileComponent from "../components/SaveJSONFileComponent";
 import { rawJsonToFlow } from "../common/commonBrowserUtils";
 
 const reducer = (state, action) => {
@@ -52,6 +53,7 @@ export default function JSONBuilder() {
   const handleRender = () => {
     return setMd(rawJsonToFlow(state));
   };
+
   return (
     <div>
       <Head>
@@ -103,6 +105,7 @@ export default function JSONBuilder() {
         ></textarea>
         <button onClick={() => handleRender()}>Render</button>
         <Flow md={md} />
+        <SaveJSONFileComponent jsonFileContents={state} />
       </main>
     </div>
   );

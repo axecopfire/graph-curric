@@ -5,8 +5,10 @@ import path from "path";
 
 export type RawMdDataType = { fileName: string; rawMd: string }[];
 
+export const getRootContentFilePath = "public/content";
+
 export const getMarkdownFileNames = (
-  root = "public/content/"
+  root = getRootContentFilePath
 ): Promise<string[]> =>
   new Promise((resolve, reject) =>
     glob(
