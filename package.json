@@ -10,6 +10,7 @@
     "test": "jest --watch"
   },
   "dependencies": {
+    "cytoscape": "^3.22.1",
     "glob": "^8.0.3",
     "markdown-it": "^13.0.1",
     "markdown-it-metadata-block": "^1.0.2",
@@ -17,8 +18,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-flow-renderer": "^10.3.11",
-    "vis-data": "^7.1.4",
-    "vis-network": "^9.1.2",
     "yaml": "^2.1.1"
   },
   "devDependencies": {
