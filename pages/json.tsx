@@ -14,8 +14,6 @@ const reducer = (state, action) => {
   }
 };
 
-const convertStateToFlow = (state) => {};
-
 interface IMd {
   nodes: any[] | boolean;
   edges: any[] | boolean;

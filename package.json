@@ -10,7 +10,6 @@
     "test": "jest --watch"
   },
   "dependencies": {
-    "cytoscape": "^3.22.1",
     "elkjs": "^0.7.1",
     "glob": "^8.0.3",
     "markdown-it": "^13.0.1",

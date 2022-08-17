@@ -5,7 +5,7 @@ import path from "path";
 
 export type RawMdDataType = { fileName: string; rawMd: string }[];
 
-export const getRootContentFilePath = "public/content";
+export const getRootContentFilePath = "public/content/";
 
 export const getMarkdownFileNames = (
   root = getRootContentFilePath

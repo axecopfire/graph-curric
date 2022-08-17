@@ -9,15 +9,17 @@ export default function useHandleMd() {
   });
 
   useEffect(() => {
-    const getStaticMd = () =>
-      fetch("/api/getStaticMd")
-        .then((res) => res.json())
-        .then((r) => {
-          const rendered = renderRawMd(r);
-          const { nodes, edges } = rawMdToFlow(rendered);
+    const getStaticMd = async () => {
+      const staticMd = await fetch("/api/getStaticMd").then((r) => r.json());
 
-          return setMd({ md: rendered, nodes, edges });
-        });
+      const rendered = renderRawMd(staticMd);
+      const sanitizedFlow = rawMdToFlow(rendered);
+      const graph = await fetch(
+        `/api/buildGraph?flow=${JSON.stringify(sanitizedFlow)}`
+      ).then((r) => r.json());
+
+      return setMd({ md: rendered, nodes: graph.nodes, edges: graph.edges });
+    };
     getStaticMd();
   }, []);
 
