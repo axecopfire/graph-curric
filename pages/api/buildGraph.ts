@@ -1,32 +1,47 @@
 import ELK from "elkjs";
 
+const cleanELKNodes = (nodesList) =>
+  nodesList.map((node) => ({
+    id: node.id,
+    data: node.data,
+    position: {
+      x: node.x,
+      y: node.y,
+    },
+  }));
+
+const exampleGraph = {
+  id: "root",
+  layoutOptions: { "elk.algorithm": "layered" },
+  children: [
+    { id: "n1", label: "elk1", width: 200, height: 100 },
+    { id: "n2", label: "elk2", width: 200, height: 100 },
+    { id: "n3", label: "elk3", width: 200, height: 100 },
+  ],
+  edges: [
+    { id: "e1", source: "n1", target: "n2" },
+    { id: "e2", source: "n1", target: "n3" },
+  ],
+};
+
 const handler = async (req, res) => {
+  const flowData = JSON.parse(req.query.flow);
+  const cleanedNodes = flowData.nodes.map((datum) => ({
+    ...datum,
+    width: 200,
+    height: 100,
+  }));
+
   const elk = new ELK();
   const graph = {
     id: "root",
-    layoutOptions: { "elk.algorithm": "layered" },
-    children: [
-      { id: "n1", label: "elk1", width: 200, height: 100 },
-      { id: "n2", label: "elk2", width: 200, height: 100 },
-      { id: "n3", label: "elk3", width: 200, height: 100 },
-    ],
-    edges: [
-      { id: "e1", source: "n1", target: "n2" },
-      { id: "e2", source: "n1", target: "n3" },
-    ],
+    // layoutOptions: { "elk.algorithm": "radial" },
+    children: cleanedNodes,
+    edges: flowData.edges,
   };
+
   const layout = await elk.layout(graph);
-  const cleanELKNodes = (nodesList) =>
-    nodesList.map((node) => ({
-      id: node.id,
-      data: {
-        label: node.label,
-      },
-      position: {
-        x: node.x,
-        y: node.y,
-      },
-    }));
+
   const returnData = {
     nodes: cleanELKNodes(layout.children),
     edges: layout.edges,

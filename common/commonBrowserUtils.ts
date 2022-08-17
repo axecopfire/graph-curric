@@ -98,6 +98,7 @@ export const buildFlow = (dataList, config: ConfigType) => {
 
     if (Array.isArray(prereq)) {
       prereq.forEach((req) => {
+        if (!req || !id) return;
         edges.push({
           id: `e-${req}-${id}`,
           source: req,
@@ -112,7 +113,7 @@ export const buildFlow = (dataList, config: ConfigType) => {
 
 export const rawJsonToFlow = async (jsonList) => {
   const flow = await buildFlow(jsonList, { source: "json" });
-  const resp = await fetch("/api/buildGraph")
+  const resp = await fetch(`/api/buildGraph?flow=${JSON.stringify(flow)}`)
     .then((res) => res.json())
     .catch(console.error);
   console.log({
