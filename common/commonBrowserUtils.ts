@@ -110,8 +110,16 @@ export const buildFlow = (dataList, config: ConfigType) => {
   return { nodes, edges };
 };
 
-export const rawJsonToFlow = (jsonList) => {
-  return buildFlow(jsonList, { source: "json" });
+export const rawJsonToFlow = async (jsonList) => {
+  const flow = await buildFlow(jsonList, { source: "json" });
+  const resp = await fetch("/api/buildGraph")
+    .then((res) => res.json())
+    .catch(console.error);
+  console.log({
+    resp,
+    flow,
+  });
+  return resp;
 };
 
 export const rawMdToFlow = (mdList) => {

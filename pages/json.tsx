@@ -50,8 +50,9 @@ export default function JSONBuilder() {
     });
   };
 
-  const handleRender = () => {
-    return setMd(rawJsonToFlow(state));
+  const handleRender = async () => {
+    const flow = await rawJsonToFlow(state);
+    return setMd(flow);
   };
 
   return (
