@@ -35,7 +35,7 @@ const handler = async (req, res) => {
   const elk = new ELK();
   const graph = {
     id: "root",
-    // layoutOptions: { "elk.algorithm": "radial" },
+    layoutOptions: { "elk.algorithm": "layered", "elk.direction": "DOWN" },
     children: cleanedNodes,
     edges: flowData.edges,
   };

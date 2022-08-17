@@ -35,9 +35,15 @@ export const initialEdges = [
   { id: "e2-3", source: "2", target: "3", animated: true },
 ];
 
-function Flow({ md: { nodes, edges } }) {
-  // const [nodes, setNodes, onNodesChange] = useNodesState(md.nodes);
-  // const [edges, setEdges, onEdgesChange] = useEdgesState(md.edges);
+function Flow({ md }) {
+  const [nodes, setNodes, onNodesChange] = useNodesState(md.nodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(md.edges);
+
+  // If we click render button, set back to default
+  useEffect(() => {
+    setNodes(md.nodes);
+    setEdges(md.edges);
+  }, [md, setNodes, setEdges]);
 
   return (
     <>
@@ -53,8 +59,8 @@ function Flow({ md: { nodes, edges } }) {
           <ReactFlow
             nodes={nodes}
             edges={edges}
-            // onNodesChange={onNodesChange}
-            // onEdgesChange={onEdgesChange}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
             fitView={true}
 
             // onNodesChange={onNodeChange}
