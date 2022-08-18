@@ -2,13 +2,12 @@ import glob from "glob";
 import process from "process";
 import fs from "fs/promises";
 import path from "path";
+import { ROOT_CONTENT_PATH } from "common/constants";
 
 export type RawMdDataType = { fileName: string; rawMd: string }[];
 
-export const getRootContentFilePath = "public/content/";
-
 export const getMarkdownFileNames = (
-  root = getRootContentFilePath
+  root = ROOT_CONTENT_PATH
 ): Promise<string[]> =>
   new Promise((resolve, reject) =>
     glob(

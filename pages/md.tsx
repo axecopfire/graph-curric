@@ -1,6 +1,7 @@
 import { renderRawMd } from "common/commonBrowserUtils";
 import Head from "next/head";
 import { useReducer, useEffect } from "react";
+import { ROOT_CONTENT_PATH } from "common/constants";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -14,6 +15,7 @@ const MdPage = () => {
   const [state, dispatch] = useReducer(reducer, {
     md: "",
     RenderedMd: "",
+    BaseFiles: [],
   });
 
   // a form with some fields (metadata, text)
@@ -23,7 +25,15 @@ const MdPage = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const data = await fetch("/content/md/Base2.md").then((r) => r.text());
+      const getMdFileList = await fetch("/api/getMdFileList").then((r) =>
+        r.json()
+      );
+      dispatch({
+        type: "SET_STATE",
+        BaseFiles: getMdFileList,
+      });
+
+      const data = await fetch("/content/Base/Base2.md").then((r) => r.text());
       dispatch({
         type: "SET_STATE",
         md: data,
@@ -95,6 +105,13 @@ const MdPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <ul>
+          {state.BaseFiles &&
+            state.BaseFiles.map((fileName, i) => {
+              const sanitizedFileName = fileName.replace(ROOT_CONTENT_PATH, "");
+              return <li key={sanitizedFileName + i}>{sanitizedFileName}</li>;
+            })}
+        </ul>
         <fieldset>
           <legend>Markdown builder</legend>
           <form onSubmit={(e) => e.preventDefault()}>

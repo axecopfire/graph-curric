@@ -1,6 +1,17 @@
-import { getRootContentFilePath } from "../../common/commonApiUtils";
 import fs from "fs";
 import path from "path";
+import { resourceLimits } from "worker_threads";
+import { ROOT_CONTENT_PATH } from "common/constants";
+
+const sanitizeName = (name) => name.toLowerCase().replace(" ", "-");
+const injectableFrontMatter = ({ fileName, folderName }) => {
+  const frontMatter = `---
+Title: ${fileName}
+id: ${sanitizeName(folderName + "-" + fileName)}
+---
+`;
+  return frontMatter;
+};
 
 const handler = (req, res) => {
   const reqJson = JSON.parse(req.query.json) as Record<
@@ -9,7 +20,11 @@ const handler = (req, res) => {
   >;
 
   Object.entries(reqJson).map(([folderName, fileList]) => {
-    const folderPath = path.join(getRootContentFilePath, "md", folderName);
+    const folderPath = path.join(
+      ROOT_CONTENT_PATH,
+      "md",
+      sanitizeName(folderName)
+    );
     try {
       fs.mkdirSync(folderPath);
     } catch (error) {
@@ -18,13 +33,16 @@ const handler = (req, res) => {
     }
 
     Object.entries(fileList).map(([fileName, content]) => {
-      const filePath = path.join(folderPath, `${fileName}.md`);
+      const filePath = path.join(folderPath, `${sanitizeName(fileName)}.md`);
       try {
         fs.statSync(filePath);
       } catch (error) {
         // If file doesn't exist then create it with seed content
         if (error.code === "ENOENT") {
-          fs.writeFileSync(filePath, content);
+          fs.writeFileSync(
+            filePath,
+            injectableFrontMatter({ fileName, folderName }) + content
+          );
         } else {
           throw error;
         }
@@ -32,7 +50,7 @@ const handler = (req, res) => {
     });
   });
 
-  return res.send({ g: "all good" });
+  return res.status(200).json({ message: "all good" });
 };
 
 export default handler;

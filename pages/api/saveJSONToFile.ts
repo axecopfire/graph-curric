@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
-import { getRootContentFilePath } from "../../common/commonApiUtils";
+import { ROOT_CONTENT_PATH } from "common/constants";
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log("--->", req.query);
@@ -41,7 +41,7 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   let fileExists;
-  const fp = path.join(getRootContentFilePath, "JSONs", `${fileName}.json`);
+  const fp = path.join(ROOT_CONTENT_PATH, "JSONs", `${fileName}.json`);
   try {
     console.log(fp);
     fileExists = fs.statSync(fp);
