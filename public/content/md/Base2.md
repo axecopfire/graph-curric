@@ -1,0 +1,35 @@
+- Developer Workflow
+
+  - Command Line
+    - Shells
+  - VS Code​
+    - Markdown ​
+  - Github
+    - Github ReadMe Profile
+    - Github Discussions
+    - Github pages
+    - Codespaces
+  - Git
+    - Github CLI
+
+- HTML
+  - Emmet
+  - Layout Sections
+  - Forms
+  - Debugging
+- CSS
+  - Selectors
+  - Box model
+  - Colors
+  - Borders
+  - Fonts
+  - Responsive CSS (Media queries)
+  - Pseudo Classes
+  - Pseudo Elements
+  - Movement
+  - Layout (Flexbox, Grid)
+  - CSS Variables
+  - CSS Syntax
+  - CSS Frameworks
+  - SMACSS
+  - Debugging

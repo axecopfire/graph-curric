@@ -23,14 +23,14 @@ const MdPage = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const data = await fetch("/content/md/Base.md").then((r) => r.text());
+      const data = await fetch("/content/md/Base2.md").then((r) => r.text());
       dispatch({
         type: "SET_STATE",
         md: data,
       });
     };
     getData();
-  }, [state.md]);
+  }, []);
 
   const handleTextAreaUpdate = (e) => {
     return dispatch({
@@ -40,12 +40,43 @@ const MdPage = () => {
   };
 
   const renderMd = () => {
-    const md = state.md.split(/##\s/).map((phase) => phase.split(/###\s/));
-    console.log({ md, st: state.md });
+    const folderSplitRE = /\n-\s/;
+    const initialFolderWithoutNewLineRE = /-\s/;
+    const fileSplitRE = /\n\s\s-\s/;
+
+    const md = state.md.split(folderSplitRE).reduce((acc, phase) => {
+      // Trims remove the \r all over the place
+      const fileList = phase.split(fileSplitRE).map((f) => f.trim());
+      const folderName = fileList
+        .shift()
+        .replace(initialFolderWithoutNewLineRE, "");
+
+      /**
+       * An object that looks like
+       * ```{
+       *  [title]: ${content string}
+       * }```
+       */
+      const fileObject = fileList.reduce((acc, file) => {
+        // content looks like <title>\r\n-<content>
+        const contentTitle = /.*/;
+        const hasContentRE = /\n.*/;
+        const title = file.match(contentTitle)[0];
+        const hasContent = file.match(hasContentRE);
+        const removeTitle = file.replace(contentTitle, "").trim();
+
+        return {
+          ...acc,
+          [title]: hasContent ? removeTitle : "",
+        };
+      }, {});
+
+      return { ...acc, [folderName]: fileObject };
+    }, {});
 
     return dispatch({
       type: "SET_STATE",
-      RenderedMd: "yo",
+      RenderedMd: JSON.stringify(md, null, 4),
     });
   };
 
@@ -79,7 +110,7 @@ const MdPage = () => {
             </button>
           </form>
         </fieldset>
-        <div>{state.RenderedMd}</div>
+        <pre>{state.RenderedMd}</pre>
       </main>
     </>
   );
