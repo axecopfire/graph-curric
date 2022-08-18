@@ -23,13 +23,17 @@
   - Colors
   - Borders
   - Fonts
-  - Responsive CSS (Media queries)
+  - Responsive CSS
+    - Media Queries
   - Pseudo Classes
   - Pseudo Elements
   - Movement
-  - Layout (Flexbox, Grid)
+  - Layout
+    - Flexbox
+    - Grid
   - CSS Variables
   - CSS Syntax
   - CSS Frameworks
-  - SMACSS
+  - CSS Architecture
+    - SMACSS
   - Debugging

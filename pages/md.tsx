@@ -80,6 +80,13 @@ const MdPage = () => {
     });
   };
 
+  const handleSaveFilesAndFolders = async () => {
+    const data = await fetch(
+      `/api/jsonToFilesFolders?json=${state.RenderedMd}`
+    ).then((r) => r.json());
+    console.log({ data });
+  };
+
   return (
     <>
       <Head>
@@ -105,12 +112,12 @@ const MdPage = () => {
             <button name="render" onClick={() => renderMd()}>
               Render
             </button>
-            <button name="save" type="submit">
-              Save
-            </button>
           </form>
         </fieldset>
         <pre>{state.RenderedMd}</pre>
+        <button onClick={() => handleSaveFilesAndFolders()}>
+          Save to Files and folders
+        </button>
       </main>
     </>
   );
