@@ -1,31 +1,44 @@
 import { ROOT_CONTENT_PATH } from "common/constants";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
+import styles from "./FileList.module.css";
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "SET_STATE":
+      const { type, ...stateToSave } = action;
+      return { ...state, ...stateToSave };
+  }
+};
+const initialState = {
+  elements: "",
+};
 
 const FileList = ({ BaseFiles }) => {
-  const [state, setState] = useState<JSX.Element | JSX.Element[]>(() => (
-    <li></li>
-  ));
+  const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
-    const jsonToElements = (json) => {
+    const jsonToElements = (json, memo = "") => {
       function isEmpty(obj) {
         return Object.keys(obj).length === 0;
       }
 
       return Object.entries(json).map(([key, value]) => {
         if (isEmpty(value)) {
-          return <li key={Math.random()}>{key}</li>;
+          return (
+            <li key={`${memo}/${key}`}>
+              <a onClick={(e) => handleClick(e, `${memo}/${key}`)}>{key}</a>
+            </li>
+          );
         }
         return (
-          <li key={Math.random()}>
+          <li key={`${memo}/${key}`}>
             {key}
-            <ul>{jsonToElements(value)}</ul>
+            <ul>{jsonToElements(value, `${memo}/${key}`)}</ul>
           </li>
         );
       });
     };
     // https://stackoverflow.com/questions/36248245/how-to-convert-an-array-of-paths-into-json-structure
     const buildJSONFromFilePathArray = ({ fileList }) => {
-      console.log({ fileList });
       const output = {};
       let current = {};
       for (const folderPath of fileList) {
@@ -43,27 +56,22 @@ const FileList = ({ BaseFiles }) => {
 
     if (BaseFiles.length) {
       const jsonRepresentation = buildJSONFromFilePathArray({
-        fileList: BaseFiles,
+        fileList: BaseFiles.map((f) => f.replace(ROOT_CONTENT_PATH, "")),
       });
 
-      setState(jsonToElements(jsonRepresentation));
+      dispatch({
+        type: "SET_STATE",
+        elements: jsonToElements(jsonRepresentation),
+      });
     }
   }, [BaseFiles]);
 
-  return (
-    <ul>
-      {state}
-      {/* {JSON.stringify(state, null, 4)} */}
-      {/* <BuildFS fileList={BaseFiles} memo={{}} /> */}
-    </ul>
-    // <ul>
-    //   {BaseFiles.map((fileName, i) => {
-    //     const sanitizedFileName = fileName.replace(ROOT_CONTENT_PATH, "");
-    //     // find out if is a folder
-    //     return <li key={sanitizedFileName + i}>{sanitizedFileName}</li>;
-    //   })}
-    // </ul>
-  );
+  const handleClick = (e, filePath) => {
+    e.preventDefault();
+    console.log(ROOT_CONTENT_PATH + filePath);
+  };
+
+  return <ul className={styles.list}>{state.elements}</ul>;
 };
 
 export default FileList;

@@ -1,0 +1,9 @@
+.list a {
+  color: rgb(122, 122, 255);
+  text-decoration: underline;
+}
+
+.list a:hover {
+  color: purple;
+  cursor: pointer;
+}
