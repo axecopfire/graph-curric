@@ -1,7 +1,6 @@
-import { renderRawMd } from "common/commonBrowserUtils";
 import Head from "next/head";
 import { useReducer, useEffect } from "react";
-import { ROOT_CONTENT_PATH } from "common/constants";
+import BaseFilesList from "../components/FileList";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -105,13 +104,7 @@ const MdPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <ul>
-          {state.BaseFiles &&
-            state.BaseFiles.map((fileName, i) => {
-              const sanitizedFileName = fileName.replace(ROOT_CONTENT_PATH, "");
-              return <li key={sanitizedFileName + i}>{sanitizedFileName}</li>;
-            })}
-        </ul>
+        {state.BaseFiles && <BaseFilesList BaseFiles={state.BaseFiles} />}
         <fieldset>
           <legend>Markdown builder</legend>
           <form onSubmit={(e) => e.preventDefault()}>

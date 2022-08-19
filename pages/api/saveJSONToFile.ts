@@ -4,7 +4,6 @@ import path from "path";
 import { ROOT_CONTENT_PATH } from "common/constants";
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("--->", req.query);
   const { updateConfirmed, data, fileName } = req.query;
 
   // TS makin me mad
