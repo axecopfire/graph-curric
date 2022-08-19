@@ -13,7 +13,7 @@ const initialState = {
   elements: "",
 };
 
-const FileList = ({ BaseFiles }) => {
+const FileList = ({ BaseFiles, handleFileListSelection }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   useEffect(() => {
     const jsonToElements = (json, memo = "") => {
@@ -64,11 +64,12 @@ const FileList = ({ BaseFiles }) => {
         elements: jsonToElements(jsonRepresentation),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [BaseFiles]);
 
   const handleClick = (e, filePath) => {
     e.preventDefault();
-    console.log(ROOT_CONTENT_PATH + filePath);
+    return handleFileListSelection(ROOT_CONTENT_PATH.slice(0, -1) + filePath);
   };
 
   return <ul className={styles.list}>{state.elements}</ul>;

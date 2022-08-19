@@ -89,11 +89,22 @@ const MdPage = () => {
     });
   };
 
+  const handleFileListSelection = async (selection) => {
+    const data = await fetch(selection.replace("public", "")).then((r) =>
+      r.text()
+    );
+    dispatch({
+      type: "SET_STATE",
+      md: data,
+    });
+
+    // dispatch({ type: "SET_STATE", RenderedMd: selection });
+  };
+
   const handleSaveFilesAndFolders = async () => {
     const data = await fetch(
       `/api/jsonToFilesFolders?json=${state.RenderedMd}`
     ).then((r) => r.json());
-    console.log({ data });
   };
 
   return (
@@ -104,7 +115,12 @@ const MdPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {state.BaseFiles && <BaseFilesList BaseFiles={state.BaseFiles} />}
+        {state.BaseFiles && (
+          <BaseFilesList
+            BaseFiles={state.BaseFiles}
+            handleFileListSelection={handleFileListSelection}
+          />
+        )}
         <fieldset>
           <legend>Markdown builder</legend>
           <form onSubmit={(e) => e.preventDefault()}>
