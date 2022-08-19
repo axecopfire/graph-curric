@@ -6,7 +6,7 @@ import { ROOT_CONTENT_PATH } from "common/constants";
 const sanitizeName = (name) => name.toLowerCase().replace(" ", "-");
 const injectableFrontMatter = ({ fileName, folderName }) => {
   const frontMatter = `---
-Title: ${fileName}
+title: ${fileName}
 id: ${sanitizeName(folderName + "-" + fileName)}
 ---
 `;

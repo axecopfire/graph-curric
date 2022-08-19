@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { useReducer, useEffect } from "react";
-import BaseFilesList from "../components/FileList";
+import BaseFilesList from "components/FileList";
+import { ROOT_CONTENT_PATH } from "common/constants";
+import MarkdownEditor from "components/MarkdownEditor";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -15,12 +17,10 @@ const MdPage = () => {
     md: "",
     RenderedMd: "",
     BaseFiles: [],
+    shouldShowRenderBaseButton: false,
+    fileListAsJson: {},
+    report: "",
   });
-
-  // a form with some fields (metadata, text)
-  // Create an API endpoint that given a filename will run through it and return the parsed out sections?
-  // List of Markdown files
-  // Further feature Md Render preview maybe?
 
   useEffect(() => {
     const getData = async () => {
@@ -41,64 +41,23 @@ const MdPage = () => {
     getData();
   }, []);
 
-  const handleTextAreaUpdate = (e) => {
-    return dispatch({
-      type: "SET_STATE",
-      md: e.target.value,
-    });
-  };
-
-  const renderMd = () => {
-    const folderSplitRE = /\n-\s/;
-    const initialFolderWithoutNewLineRE = /-\s/;
-    const fileSplitRE = /\n\s\s-\s/;
-
-    const md = state.md.split(folderSplitRE).reduce((acc, phase) => {
-      // Trims remove the \r all over the place
-      const fileList = phase.split(fileSplitRE).map((f) => f.trim());
-      const folderName = fileList
-        .shift()
-        .replace(initialFolderWithoutNewLineRE, "");
-
-      /**
-       * An object that looks like
-       * ```{
-       *  [title]: ${content string}
-       * }```
-       */
-      const fileObject = fileList.reduce((acc, file) => {
-        // content looks like <title>\r\n-<content>
-        const contentTitle = /.*/;
-        const hasContentRE = /\n.*/;
-        const title = file.match(contentTitle)[0];
-        const hasContent = file.match(hasContentRE);
-        const removeTitle = file.replace(contentTitle, "").trim();
-
-        return {
-          ...acc,
-          [title]: hasContent ? removeTitle : "",
-        };
-      }, {});
-
-      return { ...acc, [folderName]: fileObject };
-    }, {});
-
-    return dispatch({
-      type: "SET_STATE",
-      RenderedMd: JSON.stringify(md, null, 4),
-    });
-  };
-
   const handleFileListSelection = async (selection) => {
     const data = await fetch(selection.replace("public", "")).then((r) =>
       r.text()
     );
-    dispatch({
+    if (selection.includes(ROOT_CONTENT_PATH + "Base")) {
+      return dispatch({
+        type: "SET_STATE",
+        md: data,
+        shouldShowRenderBaseButton: true,
+      });
+    }
+
+    return dispatch({
       type: "SET_STATE",
       md: data,
+      shouldShowRenderBaseButton: false,
     });
-
-    // dispatch({ type: "SET_STATE", RenderedMd: selection });
   };
 
   const handleSaveFilesAndFolders = async () => {
@@ -121,29 +80,16 @@ const MdPage = () => {
             handleFileListSelection={handleFileListSelection}
           />
         )}
-        <fieldset>
-          <legend>Markdown builder</legend>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <label>
-              Editor
-              <br />
-              <textarea
-                onChange={(e) => handleTextAreaUpdate(e)}
-                cols={50}
-                rows={30}
-                value={state.md}
-                name="mdEditor"
-              />
-            </label>
-            <button name="render" onClick={() => renderMd()}>
-              Render
-            </button>
-          </form>
-        </fieldset>
+        {state.shouldShowRenderBaseButton && (
+          <MarkdownEditor state={state} dispatch={dispatch} />
+        )}
+
         <pre>{state.RenderedMd}</pre>
-        <button onClick={() => handleSaveFilesAndFolders()}>
-          Save to Files and folders
-        </button>
+        {state.shouldShowRenderBaseButton && (
+          <button onClick={() => handleSaveFilesAndFolders()}>
+            Save to Files and folders
+          </button>
+        )}
       </main>
     </>
   );

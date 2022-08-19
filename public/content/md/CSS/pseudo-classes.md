@@ -1,4 +1,4 @@
 ---
-Title: Pseudo Classes
+title: Pseudo Classes
 id: css-pseudo-classes
 ---

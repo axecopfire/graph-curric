@@ -1,4 +1,4 @@
 ---
-Title: CSS Variables
+title: CSS Variables
 id: css-css-variables
 ---

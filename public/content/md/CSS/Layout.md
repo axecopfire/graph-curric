@@ -1,5 +1,5 @@
 ---
-Title: Layout
+title: Layout
 id: css-layout
 ---
 - Flexbox

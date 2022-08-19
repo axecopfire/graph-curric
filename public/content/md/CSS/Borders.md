@@ -1,4 +1,4 @@
 ---
-Title: Borders
+title: Borders
 id: css-borders
 ---

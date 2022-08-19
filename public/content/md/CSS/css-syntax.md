@@ -1,4 +1,4 @@
 ---
-Title: CSS Syntax
+title: CSS Syntax
 id: css-css-syntax
 ---

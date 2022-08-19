@@ -9,6 +9,7 @@ const reducer = (state, action) => {
       return { ...state, ...stateToSave };
   }
 };
+
 const initialState = {
   elements: "",
 };
@@ -62,6 +63,7 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
       dispatch({
         type: "SET_STATE",
         elements: jsonToElements(jsonRepresentation),
+        fileListAsJson: jsonRepresentation,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,7 +74,30 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     return handleFileListSelection(ROOT_CONTENT_PATH.slice(0, -1) + filePath);
   };
 
-  return <ul className={styles.list}>{state.elements}</ul>;
+  const handleValidateFileListClick = async (e) => {
+    e.preventDefault();
+    const data = await fetch(
+      `/api/validateMdFiles?files=${JSON.stringify(BaseFiles)}`
+    ).then((r) => r.json());
+    dispatch({
+      type: "SET_STATE",
+      report: `${data.coverageReport}\n\n${JSON.stringify(
+        data.jestReport,
+        null,
+        4
+      )}`,
+    });
+
+    console.log({ data });
+  };
+
+  return (
+    <>
+      <ul className={styles.list}>{state.elements}</ul>
+      <button onClick={handleValidateFileListClick}>Validate File List</button>
+      <pre>{state.report}</pre>
+    </>
+  );
 };
 
 export default FileList;

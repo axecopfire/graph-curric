@@ -1,4 +1,4 @@
 ---
-Title: Pseudo Elements
+title: Pseudo Elements
 id: css-pseudo-elements
 ---

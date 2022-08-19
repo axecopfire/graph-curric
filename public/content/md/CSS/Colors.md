@@ -1,4 +1,4 @@
 ---
-Title: Colors
+title: Colors
 id: css-colors
 ---

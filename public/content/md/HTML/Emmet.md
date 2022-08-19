@@ -1,4 +1,4 @@
 ---
-Title: Emmet
+title: Emmet
 id: html-emmet
 ---
