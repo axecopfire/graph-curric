@@ -87,8 +87,6 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
         4
       )}`,
     });
-
-    console.log({ data });
   };
 
   return (

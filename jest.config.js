@@ -12,14 +12,23 @@ const customJestConfig = {
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // if using TypeScript with a baseUrl set to the root directory then you need the below for alias' to work
   moduleDirectories: ["node_modules", "<rootDir>/"],
-  testEnvironment: "jest-environment-jsdom",
+  // testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
-  // transformIgnorePatterns: ["node_modules"],
-
-  // preset: "ts-jest/presets/default-esm",
+  preset: "ts-jest/presets/default-esm",
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-module.exports = createJestConfig(customJestConfig);
+// module.exports = createJestConfig(customJestConfig);
+
+const asyncConfig = createJestConfig(customJestConfig);
+module.exports = async () => {
+  // Required to be able to overwrite nextjs' base export pattern
+  const config = await asyncConfig();
+  config.transformIgnorePatterns = [
+    // ...your ignore patterns
+    // "/node_modules/?!(markdown-it-metadata-block/)",
+  ];
+  return config;
+};
