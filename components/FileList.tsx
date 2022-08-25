@@ -81,11 +81,7 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     ).then((r) => r.json());
     dispatch({
       type: "SET_STATE",
-      report: `${data.coverageReport}\n\n${JSON.stringify(
-        data.jestReport,
-        null,
-        4
-      )}`,
+      report: `${JSON.stringify(data.testResults, null, 4)}`,
     });
   };
 

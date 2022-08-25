@@ -5,6 +5,7 @@ import process from "process";
 import path from "path";
 
 const handler = async (req, res) => {
+  let testResults = "";
   const runJestAndGetResults = () =>
     new Promise((resolve, reject) => {
       const cmd = exec("yarn test:md");
@@ -13,32 +14,45 @@ const handler = async (req, res) => {
       });
 
       cmd.stderr.on("data", (data) => {
+        if (data.includes("JestMdTestResults")) {
+          testResults = data;
+        }
         console.error(`stderr: ${data}`);
       });
 
       cmd.on("close", (code) => {
         console.log(`child process exited with code ${code}`);
-        if (code > 0) reject({ code });
+        // We get results from the files written in /coverage. So we ignore any error codes
         return resolve({ code });
       });
     });
 
   await runJestAndGetResults();
 
-  const getAndParseReport = async (reportPath, json = false) => {
-    const report = await fs.promises.readFile(
-      path.join(process.cwd(), reportPath)
-    );
-    if (json) {
-      return JSON.parse(report.toString());
-    }
-    return report.toString();
-  };
+  // These reports would be cool to send to the UI user
+  // However, running paralleled fs read/writes is going to be a challenge for another day
+  // const getAndParseReport = async (reportPath, json = false) => {
+  //   const report = await fs.promises.readFile(
+  //     path.join(process.cwd(), reportPath)
+  //   );
+  //   if (json) {
+  //     return JSON.parse(report.toString());
+  //   }
+  //   return report.toString();
+  // };
 
-  const jestReport = await getAndParseReport("coverage/jestResults.json", true);
-  const coverageReport = await getAndParseReport("coverage/istanbul.txt");
+  // const jestReport = await getAndParseReport("coverage/jestResults.json", true);
+  // const coverageReport = await getAndParseReport("coverage/istanbul.txt");
 
-  return res.status(200).json({ jestReport, coverageReport });
+  //
+  testResults = JSON.parse(
+    testResults
+      .match(/JestMdTestResults.*/)[0]
+      .replace(/JestMdTestResults:\s/, "")
+      .slice(1, -1)
+  ); // Removes first/last character, which are '
+
+  return res.status(200).json({ testResults });
 };
 
 export default handler;

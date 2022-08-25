@@ -8,12 +8,32 @@ import { renderRawMd } from "common/commonBrowserUtils";
 describe("Check markdown files", () => {
   it("should have content", async () => {
     const mdFilePath = ROOT_CONTENT_PATH + "md/**/";
-    // console.log({ mdFilePath });
     const mdFiles = await getStaticMd(mdFilePath);
-    // console.log(renderRawMd(mdFiles));
-    // await Promise.all(mdFiles.map(async file => {
-    // }))
+    const fileResults = await Promise.all(
+      renderRawMd(mdFiles).map(async (file) => {
+        const result = {
+          fileName: file.fileName,
+          error: [],
+        };
+        if (!file.renderedMd) {
+          result.error.push({ statusCode: 204, message: "no rendered md" });
+        }
+        return result;
+      })
+    );
 
+    console.log({ JestMdTestResults: JSON.stringify(fileResults) });
+
+    let failedTest = false;
+    fileResults.map((file) => {
+      if (file.error.length) {
+        failedTest = true;
+        // Console.error makes Jest very verbose so, keep as console.log
+        console.log(JSON.stringify(file));
+      }
+    });
+
+    expect(failedTest).toEqual(false);
     expect(1).toEqual(1);
   });
 });
