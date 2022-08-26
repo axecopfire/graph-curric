@@ -80,9 +80,7 @@ const MdPage = () => {
             handleFileListSelection={handleFileListSelection}
           />
         )}
-        {state.shouldShowRenderBaseButton && (
-          <MarkdownEditor state={state} dispatch={dispatch} />
-        )}
+        <MarkdownEditor state={state} dispatch={dispatch} />
 
         <pre>{state.RenderedMd}</pre>
         {state.shouldShowRenderBaseButton && (
