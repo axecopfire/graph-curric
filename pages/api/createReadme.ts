@@ -9,6 +9,11 @@ export default async function handler(req, res) {
       return Object.keys(obj).length === 0;
     }
 
+    const starterMdMetadata = `---
+id: curriculum
+title: Curriculum
+---`;
+
     return Object.entries(json).reduce((acc, [key, value]) => {
       const filePath = `${memo}/${key}`;
       let heading = "";
@@ -37,7 +42,7 @@ export default async function handler(req, res) {
       return `${
         acc + heading + "\n" + jsonToMarkdown(value, filePath, level + 1)
       }`;
-    }, "");
+    }, starterMdMetadata);
   };
 
   const result = jsonToMarkdown(curriculum.md);

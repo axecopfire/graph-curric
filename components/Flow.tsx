@@ -4,9 +4,17 @@ import ReactFlow, {
   Controls,
   applyEdgeChanges,
   applyNodeChanges,
+  EdgeChange,
+  NodeChange,
   useNodesState,
   useEdgesState,
+  Node,
+  Edge,
+  OnNodesChange,
+  OnEdgesChange,
 } from "react-flow-renderer";
+import GroupNode from "./CustomNodes/GroupNode";
+import ChildNode from "./CustomNodes/ChildNode";
 
 export const initialNodes = [
   {
@@ -28,6 +36,12 @@ export const initialNodes = [
     data: { label: "Output Node" },
     position: { x: 250, y: 250 },
   },
+  {
+    id: "4",
+    type: "groupNode",
+    data: { label: "Custom node" },
+    position: { x: 100, y: 300 },
+  },
 ];
 
 export const initialEdges = [
@@ -35,9 +49,36 @@ export const initialEdges = [
   { id: "e2-3", source: "2", target: "3", animated: true },
 ];
 
-function Flow({ md }) {
+const nodeTypes = {
+  groupNode: GroupNode,
+  childNode: ChildNode,
+};
+
+type FlowProps = {
+  md: { nodes: any; edges: any };
+  custom?: {
+    onNodesChange?: OnNodesChange;
+    onEdgesChange?: OnEdgesChange;
+  };
+};
+
+function Flow({ md, custom = {} }: FlowProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState(md.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(md.edges);
+
+  const cusOnNodesChange = useCallback(
+    (changes) => {
+      return setNodes((nds) => {
+        console.log({ changes, nds });
+        return applyNodeChanges(changes, nds);
+      });
+    },
+    [setNodes]
+  );
+  const cusOnEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    [setEdges]
+  );
 
   // If we click render button, set back to default
   useEffect(() => {
@@ -58,9 +99,10 @@ function Flow({ md }) {
         >
           <ReactFlow
             nodes={nodes}
+            nodeTypes={nodeTypes}
             edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
+            onNodesChange={custom?.onNodesChange ?? onNodesChange}
+            onEdgesChange={custom?.onEdgesChange ?? onEdgesChange}
             fitView={true}
 
             // onNodesChange={onNodeChange}

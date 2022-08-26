@@ -17,10 +17,12 @@ export const getMarkdownFileNames = (
     )
   );
 
-export const getStaticMd = async (root?: string) => {
+export const getStaticMd = async (root?: string, fileList = []) => {
   const result: RawMdDataType = [];
   const cwd = process.cwd();
-  const fileNames = await getMarkdownFileNames(root);
+  const fileNames = fileList.length
+    ? fileList
+    : await getMarkdownFileNames(root);
 
   for (const fileName of fileNames) {
     const md = await fs.readFile(path.resolve(cwd, fileName), {

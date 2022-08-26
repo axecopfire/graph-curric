@@ -18,7 +18,6 @@ const MdPage = () => {
     RenderedMd: "",
     BaseFiles: [],
     shouldShowRenderBaseButton: false,
-    fileListAsJson: {},
     report: "",
   });
 

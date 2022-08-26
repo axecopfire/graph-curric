@@ -4,6 +4,7 @@ import yaml from "yaml";
 import { Node, Edge } from "react-flow-renderer";
 
 import { RawMdDataType } from "./commonApiUtils";
+import { ROOT_CONTENT_PATH } from "./constants";
 
 export type MetaType = {
   title: string;
@@ -66,7 +67,7 @@ export const renderRawMd = (rawMdList: RawMdDataType) => {
 };
 
 type ConfigType = {
-  source: "json" | "md";
+  source: "json" | "md" | "fileList";
 };
 
 export const buildFlow = (dataList, config: ConfigType) => {
@@ -111,6 +112,71 @@ export const buildFlow = (dataList, config: ConfigType) => {
   return { nodes, edges };
 };
 
+const getElementHeritage = (fileName) => {
+  const sanitizedFilePath = fileName.replace(ROOT_CONTENT_PATH + "md/", "");
+  const fpArr = sanitizedFilePath.split("/");
+  const child = fpArr.pop();
+  const parentId = fpArr.join("-");
+  return { child, parentId };
+};
+
+export const buildFlowWithNestedElements = async (renderedElementList) => {
+  const parentMap = new Map(); // TODO: Iterate through Map and append to result array
+  const updatedListChildren = renderedElementList.map((item) => {});
+
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  let y = 25;
+  let counter = 0;
+
+  for (const data of renderedElementList) {
+    counter++;
+    let prereq, title, id;
+
+    prereq = data?.meta.prereq;
+    title = data?.meta.title;
+    id = data?.meta.id;
+    const { parentId } = getElementHeritage(data.fileName);
+    const parentIdExists = nodes.filter((node) => node.id === parentId);
+    if (!parentIdExists.length) {
+      nodes.push({
+        id: parentId,
+        type: "group",
+        position: { x: 0, y: 0 },
+        style: {
+          width: 170,
+          height: 140,
+        },
+        data: { label: parentId },
+      });
+    }
+    const parentElement = nodes.filter((node) => node.id === parentId);
+
+    // TODO: Make this work
+    nodes.push({
+      id,
+      data: { label: title },
+      parentNode: parentId,
+      position: { x: counter % 2 == 0 ? 250 : 100, y },
+    });
+    y += 100;
+
+    if (Array.isArray(prereq)) {
+      prereq.forEach((req) => {
+        if (!req || !id) return;
+        edges.push({
+          id: `e-${req}-${id}`,
+          source: req,
+          target: id,
+          animated: true,
+        });
+      });
+    }
+  }
+  return { nodes, edges };
+};
+
 export const rawJsonToFlow = async (jsonList) => {
   const flow = await buildFlow(jsonList, { source: "json" });
   const resp = await fetch(`/api/buildGraph?flow=${JSON.stringify(flow)}`)
@@ -125,4 +191,11 @@ export const rawJsonToFlow = async (jsonList) => {
 
 export const rawMdToFlow = (mdList) => {
   return buildFlow(mdList, { source: "md" });
+};
+
+export const renderedFileListToFlow = async (fileList) => {
+  const renderedFlow = await buildFlowWithNestedElements(fileList);
+
+  console.log({ renderedFlow });
+  return fileList;
 };

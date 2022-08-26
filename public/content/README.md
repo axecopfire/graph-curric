@@ -1,3 +1,8 @@
+---
+id: curriculum
+title: Curriculum
+---
+
 # [css](md/css)
 
 - [borders](md/css/borders.md)
@@ -15,12 +20,14 @@
 - [pseudo-elements](md/css/pseudo-elements.md)
 - [responsive-css](md/css/responsive-css.md)
 - [selectors](md/css/selectors.md)
+
 # [developer-workflow](md/developer-workflow)
 
 - [command-line](md/developer-workflow/command-line.md)
 - [git](md/developer-workflow/git.md)
 - [github](md/developer-workflow/github.md)
 - [vs-code​](md/developer-workflow/vs-code​.md)
+
 # [html](md/html)
 
 - [debugging](md/html/debugging.md)
