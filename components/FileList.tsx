@@ -41,15 +41,25 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     return handleFileListSelection(ROOT_CONTENT_PATH.slice(0, -1) + filePath);
   };
 
+  const handleCreateReadmeClick = async (e) => {
+    e.preventDefault();
+    const report = await fetch(
+      `/api/createReadme?curriculum=${JSON.stringify(state.fileListAsJson)}`
+    ).then((r) => r.json());
+
+    dispatch({
+      type: "SET_STATE",
+      report: JSON.stringify(report, null, 4),
+    });
+  };
+
   const buildFileListAccessory = (data) => {
+    if (Array.isArray(data?.error) && !data?.error.length) {
+      return <span>✔️</span>;
+    }
     if (data?.error.length) {
       return (
-        <p
-          style={{ display: "inline" }}
-          title={data.error.map((e) => e.message).join("\n")}
-        >
-          ❌
-        </p>
+        <span title={data.error.map((e) => e.message).join("\n")}>❌</span>
       );
     }
     return "";
@@ -65,8 +75,9 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
       if (isEmpty(value)) {
         return (
           <li key={filePath}>
-            <a onClick={(e) => handleClick(e, filePath)}>{key}</a>
-            {buildFileListAccessory(state.testResults[filePath])}
+            <a onClick={(e) => handleClick(e, filePath)}>
+              {key} {buildFileListAccessory(state.testResults[filePath])}
+            </a>
           </li>
         );
       }
@@ -122,6 +133,7 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     <>
       <ul className={styles.list}>{state.elements}</ul>
       <button onClick={handleValidateFileListClick}>Validate File List</button>
+      <button onClick={handleCreateReadmeClick}>Create Readme</button>
       <pre>{state.report}</pre>
     </>
   );
