@@ -8,6 +8,7 @@ import ReactFlow, {
 } from "react-flow-renderer";
 import GroupNode from "./CustomNodes/GroupNode";
 import ChildNode from "./CustomNodes/ChildNode";
+import useGroupNode from "hooks/useGroupNode";
 
 const initialNodes: Node[] = [
   {
@@ -55,61 +56,14 @@ function Flow() {
   const [timer, setTimer] = useState(0);
   const [lastDraggedNode, setLastDraggedNode] = useState<undefined | Node>();
 
-  useEffect(() => {
-    if (timer < 5) {
-      setTimeout(() => {
-        setTimer(timer + 1);
-      }, 100);
-    }
-    if (timer === 5) {
-      const isNodeIntersect = (node1, node2) => {
-        const xIntersect =
-          node1.position.x + node1.width >= node2.position.x &&
-          node1.position.x <= node2.position.x + node2.width;
-        const yIntersect =
-          node1.position.y + node1.height >= node2.position.y &&
-          node1.position.y <= node2.position.y + node2.height;
-        return xIntersect && yIntersect;
-      };
-      const hasIntersect =
-        lastDraggedNode && !lastDraggedNode.parentNode
-          ? nodes.filter((checkNode) => {
-              if (checkNode.type !== "groupNode") return false;
-              if (lastDraggedNode.id === checkNode.id) return false;
-              return isNodeIntersect(lastDraggedNode, checkNode);
-            })
-          : [];
-      if (hasIntersect.length) {
-        const parentNode = hasIntersect[0];
-        console.log(parentNode);
-        const filteredArray = nodes.filter(
-          (node) => node.id !== parentNode.id && node.id !== lastDraggedNode.id
-        );
-        const newNodeList = [
-          ...filteredArray,
-          {
-            ...parentNode,
-            data: {
-              ...parentNode.data,
-              width: parentNode.width + 100,
-              height: parentNode.height + 100,
-            },
-          },
-          {
-            ...lastDraggedNode,
-            parentNode: parentNode.id,
-            extent: "parent",
-          } as Node,
-        ];
-
-        setNodes([...newNodeList]);
-      }
-      // On intersection
-      // update node to new parent
-      // Make parent element bigger
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timer]);
+  // Currently does not work
+  // useGroupNode({
+  //   nodes,
+  //   setNodes,
+  //   lastDraggedNode,
+  //   timer,
+  //   setTimer,
+  // });
 
   const customOnNodesChange = useCallback(
     (changes) => {
