@@ -1,8 +1,10 @@
 import { ROOT_CONTENT_PATH } from "common/constants";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useContext } from "react";
 import styles from "./FileList.module.css";
 import { renderedFileListToFlow, renderRawMd } from "common/commonBrowserUtils";
 import FileListFlow from "./FileListFlow";
+import { FlowContext } from "context/FlowContext";
+import useHandleMd from "hooks/useHandleMd";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -20,6 +22,8 @@ const initialState = {
 
 const FileList = ({ BaseFiles, handleFileListSelection }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const flowContext = useContext(FlowContext);
+  const flowDispatch = flowContext.dispatch;
 
   const handleClick = (e, filePath) => {
     e.preventDefault();
@@ -138,6 +142,17 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     // );
 
     const data = await renderedFileListToFlow(renderedMd);
+
+    console.log({ renderedFileListToFlow });
+
+    flowDispatch({
+      type: "SET_NODES",
+      payload: [...data.nodes],
+    });
+    flowDispatch({
+      type: "SET_EDGES",
+      payload: data.edges,
+    });
   };
 
   useEffect(() => {

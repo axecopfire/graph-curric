@@ -4,7 +4,6 @@ const cleanELKNodes = (nodesList) =>
   nodesList.map((node) => ({
     id: node.id,
     data: node.data,
-    parentNode: "A",
     position: {
       x: node.x,
       y: node.y,
@@ -44,19 +43,7 @@ const handler = async (req, res) => {
   const layout = await elk.layout(graph);
 
   const returnData = {
-    nodes: [
-      {
-        id: "A",
-        type: "group",
-        data: { label: "Group label" },
-        position: { x: 0, y: 0 },
-        style: {
-          width: 500,
-          height: 500,
-        },
-      },
-      ...cleanELKNodes(layout.children),
-    ],
+    nodes: [...cleanELKNodes(layout.children)],
     edges: layout.edges,
   };
   return res.send(returnData);

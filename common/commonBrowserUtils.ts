@@ -70,7 +70,7 @@ type ConfigType = {
   source: "json" | "md" | "fileList";
 };
 
-export const buildFlow = (dataList, config: ConfigType) => {
+export const buildFlow = async (dataList, config: ConfigType) => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
@@ -90,6 +90,7 @@ export const buildFlow = (dataList, config: ConfigType) => {
       title = data.title;
       id = data.id;
     }
+
     nodes.push({
       id,
       data: { label: title },
@@ -109,7 +110,14 @@ export const buildFlow = (dataList, config: ConfigType) => {
       });
     }
   }
-  return { nodes, edges };
+
+  const resp = await fetch(
+    `/api/buildGraph?flow=${JSON.stringify({ nodes, edges })}`
+  )
+    .then((res) => res.json())
+    .catch(console.error);
+
+  return { nodes: resp.nodes, edges: resp.edges };
 };
 
 const getElementHeritage = (fileName) => {
@@ -179,14 +187,8 @@ export const buildFlowWithNestedElements = async (renderedElementList) => {
 
 export const rawJsonToFlow = async (jsonList) => {
   const flow = await buildFlow(jsonList, { source: "json" });
-  const resp = await fetch(`/api/buildGraph?flow=${JSON.stringify(flow)}`)
-    .then((res) => res.json())
-    .catch(console.error);
-  console.log({
-    resp,
-    flow,
-  });
-  return resp;
+
+  return flow;
 };
 
 export const rawMdToFlow = (mdList) => {
@@ -194,8 +196,9 @@ export const rawMdToFlow = (mdList) => {
 };
 
 export const renderedFileListToFlow = async (fileList) => {
-  const renderedFlow = await buildFlowWithNestedElements(fileList);
+  console.log({ fileList });
+  // const renderedFlow = await buildFlowWithNestedElements(fileList);
+  const renderedFlow = await buildFlow(fileList, { source: "md" });
 
-  console.log({ renderedFlow });
-  return fileList;
+  return renderedFlow;
 };

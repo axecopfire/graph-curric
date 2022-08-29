@@ -3,6 +3,7 @@ import { useReducer, useEffect } from "react";
 import BaseFilesList from "components/FileList";
 import { ROOT_CONTENT_PATH } from "common/constants";
 import MarkdownEditor from "components/MarkdownEditor";
+import { FlowContextProvider } from "context/FlowContext";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -72,22 +73,24 @@ const MdPage = () => {
         <meta name="description" content="Build Markdown for graphs" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        {state.BaseFiles && (
-          <BaseFilesList
-            BaseFiles={state.BaseFiles}
-            handleFileListSelection={handleFileListSelection}
-          />
-        )}
-        <MarkdownEditor state={state} dispatch={dispatch} />
+      <FlowContextProvider>
+        <main>
+          {state.BaseFiles && (
+            <BaseFilesList
+              BaseFiles={state.BaseFiles}
+              handleFileListSelection={handleFileListSelection}
+            />
+          )}
+          <MarkdownEditor state={state} dispatch={dispatch} />
 
-        <pre>{state.RenderedMd}</pre>
-        {state.shouldShowRenderBaseButton && (
-          <button onClick={() => handleSaveFilesAndFolders()}>
-            Save to Files and folders
-          </button>
-        )}
-      </main>
+          <pre>{state.RenderedMd}</pre>
+          {state.shouldShowRenderBaseButton && (
+            <button onClick={() => handleSaveFilesAndFolders()}>
+              Save to Files and folders
+            </button>
+          )}
+        </main>
+      </FlowContextProvider>
     </>
   );
 };

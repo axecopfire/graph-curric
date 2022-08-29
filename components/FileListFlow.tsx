@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useContext } from "react";
 import ReactFlow, {
   applyEdgeChanges,
   applyNodeChanges,
@@ -8,7 +8,7 @@ import ReactFlow, {
 } from "react-flow-renderer";
 import GroupNode from "./CustomNodes/GroupNode";
 import ChildNode from "./CustomNodes/ChildNode";
-import useGroupNode from "hooks/useGroupNode";
+import { FlowContext } from "context/FlowContext";
 
 const initialNodes: Node[] = [
   {
@@ -49,12 +49,10 @@ const nodeTypes = {
 };
 
 function Flow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(
-    initialNodes as Node[]
-  );
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [timer, setTimer] = useState(0);
-  const [lastDraggedNode, setLastDraggedNode] = useState<undefined | Node>();
+  // const [timer, setTimer] = useState(0);
+  // const [lastDraggedNode, setLastDraggedNode] = useState<undefined | Node>();
+
+  const { state, dispatch } = useContext(FlowContext);
 
   // Currently does not work
   // useGroupNode({
@@ -65,21 +63,9 @@ function Flow() {
   //   setTimer,
   // });
 
-  const customOnNodesChange = useCallback(
-    (changes) => {
-      setTimer(0);
-      return setNodes((nds) => {
-        const dragged = nds.find((node) => node.dragging);
-        setLastDraggedNode(dragged);
-        return applyNodeChanges(changes, nds);
-      });
-    },
-    [setNodes]
-  );
-  const customOnEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [setEdges]
-  );
+  useEffect(() => {
+    console.log({ nodes: state.nodes });
+  }, [state.nodes]);
 
   return (
     <div
@@ -92,10 +78,8 @@ function Flow() {
     >
       <ReactFlow
         nodeTypes={nodeTypes}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={customOnNodesChange}
-        onEdgesChange={customOnEdgesChange}
+        nodes={state.nodes}
+        edges={state.edges}
         fitView
       />
     </div>

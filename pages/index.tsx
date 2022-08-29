@@ -8,7 +8,6 @@ import Flow from "../components/Flow";
 
 export default function Home() {
   const { md, setMd } = useHandleMd();
-  console.log({ md });
 
   return (
     <div className={styles.container}>
