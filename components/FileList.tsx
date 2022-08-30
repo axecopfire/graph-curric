@@ -198,9 +198,13 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     <>
       <FileListFlow />
       <ul className={styles.list}>{state.elements}</ul>
-      <button onClick={handleValidateFileListClick}>Validate File List</button>
-      <button onClick={handleCreateReadmeClick}>Create Readme</button>
-      <button onClick={handleRenderClick}>Render</button>
+      <div>
+        <button onClick={handleValidateFileListClick}>
+          Validate File List
+        </button>
+        <button onClick={handleCreateReadmeClick}>Create Readme</button>
+        <button onClick={handleRenderClick}>Render</button>
+      </div>
       <pre>{state.report}</pre>
     </>
   );

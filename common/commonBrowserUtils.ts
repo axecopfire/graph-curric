@@ -185,6 +185,21 @@ export const buildFlowWithNestedElements = async (renderedElementList) => {
   return { nodes, edges };
 };
 
+export const getRenderFileList = async () => {
+  const getMdFileList = await fetch("/api/getMdFileList").then((r) => r.json());
+
+  const fileListToRender = getMdFileList.filter((filePath) =>
+    filePath.includes("content/md/")
+  );
+
+  const staticMd = await fetch(
+    `/api/getStaticMd?fileList=${JSON.stringify(fileListToRender)}`
+  ).then((r) => r.json());
+  const renderedMd = renderRawMd(staticMd);
+
+  return renderedMd;
+};
+
 export const rawJsonToFlow = async (jsonList) => {
   const flow = await buildFlow(jsonList, { source: "json" });
 

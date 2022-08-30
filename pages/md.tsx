@@ -4,18 +4,30 @@ import BaseFilesList from "components/FileList";
 import { ROOT_CONTENT_PATH } from "common/constants";
 import MarkdownEditor from "components/MarkdownEditor";
 import { FlowContextProvider } from "context/FlowContext";
+import EditFileModal from "components/EditFileModal";
 
 const reducer = (state, action) => {
+  const { type, ...stateToSave } = action;
   switch (action.type) {
     case "SET_STATE":
-      const { type, ...stateToSave } = action;
       return { ...state, ...stateToSave };
+    case "SET_MD":
+      return {
+        ...state,
+        md: {
+          rawMd: action.payload,
+          fileName: state.md.fileName,
+        },
+      };
   }
 };
 
 const MdPage = () => {
   const [state, dispatch] = useReducer(reducer, {
-    md: "",
+    md: {
+      rawMd: "",
+      fileName: "",
+    },
     RenderedMd: "",
     BaseFiles: [],
     shouldShowRenderBaseButton: false,
@@ -32,30 +44,40 @@ const MdPage = () => {
         BaseFiles: getMdFileList,
       });
 
-      const data = await fetch("/content/Base/Base2.md").then((r) => r.text());
+      const fileName = "/content/Base/Content.md";
+
+      const data = await fetch(fileName).then((r) => r.text());
       dispatch({
         type: "SET_STATE",
-        md: data,
+        md: {
+          rawMd: data,
+          fileName,
+        },
       });
     };
     getData();
   }, []);
 
   const handleFileListSelection = async (selection) => {
-    const data = await fetch(selection.replace("public", "")).then((r) =>
-      r.text()
-    );
+    const fileName = selection.replace("public", "");
+    const data = await fetch(fileName).then((r) => r.text());
     if (selection.includes(ROOT_CONTENT_PATH + "Base")) {
       return dispatch({
         type: "SET_STATE",
-        md: data,
+        md: {
+          rawMd: data,
+          fileName,
+        },
         shouldShowRenderBaseButton: true,
       });
     }
 
     return dispatch({
       type: "SET_STATE",
-      md: data,
+      md: {
+        rawMd: data,
+        fileName,
+      },
       shouldShowRenderBaseButton: false,
     });
   };
@@ -74,7 +96,13 @@ const MdPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <FlowContextProvider>
-        <main>
+        <EditFileModal file="hi" />
+        <main
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}
+        >
           {state.BaseFiles && (
             <BaseFilesList
               BaseFiles={state.BaseFiles}
