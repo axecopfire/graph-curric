@@ -1,9 +1,24 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, useRef } from "react";
 import { getRenderFileList } from "common/commonBrowserUtils";
 import { LazyContextProvider, LazyContext } from "context/LazyContext";
 
 const ManageWeeksAndPhasesComponent = () => {
   const { state, dispatch } = useContext(LazyContext);
+  const sumArray = (arr) => arr.reduce((partialSum, a) => partialSum + a, 0);
+  const isLoadedRef = useRef(false)
+
+  useEffect(() => {
+    if(!isLoadedRef.current) {
+      dispatch({
+        type: 'SET_STATE',
+        phases: [1],
+        weekCapacity: 1,
+        numberOfPhases: 1,
+        weekPhaseAllocated: 1
+      })
+    }
+    isLoadedRef.current = true;
+  }, []);
 
   return (
     <form>
@@ -20,13 +35,13 @@ const ManageWeeksAndPhasesComponent = () => {
         <input
           type="number"
           name="weeks"
-          min="1"
+          min={state.phases}
           max="51"
           value={state.weekCapacity || 1}
           onChange={(e) =>
             dispatch({
               type: "SET_STATE",
-              weekCapacity: e.target.value,
+              weekCapacity: +e.target.value,
             })
           }
         />
@@ -36,40 +51,50 @@ const ManageWeeksAndPhasesComponent = () => {
             type="number"
             name="phases"
             min="1"
-            max={state.weekCapacity || 0}
+            max={state.weekCapacity}
+            value={state.numberOfPhases || 1}
             onChange={(e) => {
               e.preventDefault();
+              const numberOfPhases = +e.target.value;
+              const phaseArray = Array(numberOfPhases).fill(1);
+
               dispatch({
                 type: "SET_STATE",
-                numberOfPhases: e.target.value,
-              });
-              dispatch({
-                type: "SET_STATE",
-                phases: Array.from(Array(Number(state.numberOfPhases)).keys()),
+                numberOfPhases: numberOfPhases,
+                phases: phaseArray,
+                weekPhaseAllocated: sumArray(phaseArray)
               });
             }}
           />
-          {state.weekPhaseAllocation} Weeks left to allocate to phases
+          <br /><b>
+          {state.weekCapacity} - {state.weekPhaseAllocated} = {state.weekCapacity - state.weekPhaseAllocated || 0} </b> Weeks left to allocate to phases
+          <br />
           <ul>
-            {state.numberOfPhases &&
-              Array.from(Array(Number(state.numberOfPhases)).keys()).map(
+            {state?.phases?.length &&
+              state.phases.map(
                 (phase, i) => (
                   <li key={"Phase-" + i}>
                     <label htmlFor="weeksPerPhase">
-                      Number of weeks for phase {phase + 1}
+                      Number of weeks for phase {i + 1}
                     </label>
                     <input
                       type="number"
                       name="weeksPerPhase"
                       min="1"
-                      max="10"
+                      value={phase}
+                      max={(state.weekCapacity - state.weekPhaseAllocated) + phase}
                       onChange={(e) => {
                         e.preventDefault();
-                        console.log(phase);
-                        // dispatch({
-                        //   type: "SET_STATE",
-                        //   numberOfPhases: e.target.value,
-                        // });
+                        const updatedPhaseArray = state.phases;
+                        updatedPhaseArray[i] = +e.target.value;
+
+                        const weekPhaseAllocated = sumArray(updatedPhaseArray);
+
+                        dispatch({
+                          type: "SET_STATE",
+                          phases: updatedPhaseArray,
+                          weekPhaseAllocated
+                        });
                       }}
                     />
                   </li>
@@ -192,9 +217,9 @@ const SyllabusListComponent = ({ allocated }) => {
 const BaseSyllabusComponent = () => {
   const { state, dispatch } = useContext(LazyContext);
 
-  const handleAllocate = (e, fileName, week) => {
+  const handleRender = (e) => {
     e.preventDefault();
-    console.log({ fileName, week });
+    console.log({ state });
   };
 
   useEffect(() => {
@@ -211,6 +236,7 @@ const BaseSyllabusComponent = () => {
   return (
     <>
       <ManageWeeksAndPhasesComponent />
+      <button onClick={handleRender}>Render</button>
       <form>
         Unallocated
         <SyllabusListComponent allocated={false} />
