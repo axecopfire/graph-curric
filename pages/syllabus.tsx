@@ -8,7 +8,7 @@ const ManageWeeksAndPhasesComponent = () => {
   const isLoadedRef = useRef(false)
 
   useEffect(() => {
-    if(!isLoadedRef.current) {
+    if (!isLoadedRef.current) {
       dispatch({
         type: 'SET_STATE',
         phases: [1],
@@ -67,7 +67,7 @@ const ManageWeeksAndPhasesComponent = () => {
             }}
           />
           <br /><b>
-          {state.weekCapacity} - {state.weekPhaseAllocated} = {state.weekCapacity - state.weekPhaseAllocated || 0} </b> Weeks left to allocate to phases
+            {state.weekCapacity} - {state.weekPhaseAllocated} = {state.weekCapacity - state.weekPhaseAllocated || 0} </b> Weeks left to allocate to phases
           <br />
           <ul>
             {state?.phases?.length &&
@@ -213,14 +213,78 @@ const SyllabusListComponent = ({ allocated }) => {
   );
 };
 
+const reMatchHeading = (toMatch: string) => {
+  /**
+   * [
+   * '# Phase 1',
+   * "## Week 1"
+   * "### CSS"
+   * "- borders"
+   * ]
+   * 
+   */
+  const matchRE = [
+    ['phase', /^#\s/],
+    ['week', /^##\s/],
+    ['topic', /^###\s/],
+    ['subject', /^-\s/]
+  ];
+
+  const matched = matchRE.filter((reArr) => {
+    const [title, re] = reArr;
+    const match = toMatch.match(re);
+
+    return !match ? false : title;
+  });
+
+  if (matched.length > 1) {
+    throw new Error('Too many matches found, oops' + toMatch);
+  }
+  if (matched.length) {
+    return matched[0][0];
+  }
+
+  return false;
+}
+
+const handleRender = async (e, state) => {
+  e.preventDefault();
+  const mdArr = [];
+  let weekCounter = 1;
+
+  // Build Phases/Weeks
+  state.phases.forEach((numOfWks: number, i: number) => {
+    const arrayOWeeks = Array(numOfWks).fill('');
+    arrayOWeeks.forEach((_, j) => {
+      if (!j) mdArr.push(
+        '# Phase ' + (i + 1)
+      )
+      mdArr.push('## Week ' + weekCounter)
+      weekCounter++;
+    });
+  })
+
+  // Stick Topics in weeks
+  const allocatedFiles = state.fileList.filter((file) => file.week);
+
+  allocatedFiles.forEach((file) => {
+    const sanitizedFileName = file.fileName.replace('public/content/md/', '').replace('.md', '');
+
+    const weekIndex = mdArr.findIndex(el => el === `## Week ${file.week}`);
+
+    mdArr.splice(weekIndex, 0, `- ${sanitizedFileName}`);
+  });
+
+  const toSave = mdArr.join('\r');
+
+  // Save to FS
+  return fetch(`/api/saveSyllabus?mdFile=${window.encodeURIComponent(toSave)}`)
+};
+
+
 // Cause of how I'm weirdly doing context
 const BaseSyllabusComponent = () => {
   const { state, dispatch } = useContext(LazyContext);
-
-  const handleRender = (e) => {
-    e.preventDefault();
-    console.log({ state });
-  };
 
   useEffect(() => {
     const getData = async () => {
@@ -234,18 +298,26 @@ const BaseSyllabusComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <>
+    <div>
       <ManageWeeksAndPhasesComponent />
-      <button onClick={handleRender}>Render</button>
-      <form>
-        Unallocated
-        <SyllabusListComponent allocated={false} />
-      </form>
-      <form>
-        Allocated
-        <SyllabusListComponent allocated={true} />
-      </form>
-    </>
+      {state.weekCapacity - state.weekPhaseAllocated === 0 && 
+      <>
+        <button onClick={(e) => handleRender(e, state)}>Render</button>
+        <div style={{
+          display: 'flex'
+        }}>
+          <form>
+            Unallocated
+            <SyllabusListComponent allocated={false} />
+          </form>
+          <form>
+            Allocated
+            <SyllabusListComponent allocated={true} />
+          </form>
+        </div>
+        </>
+      }
+    </div>
   );
 };
 

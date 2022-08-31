@@ -4,7 +4,6 @@ import BaseFilesList from "components/FileList";
 import { ROOT_CONTENT_PATH } from "common/constants";
 import MarkdownEditor from "components/MarkdownEditor";
 import { FlowContextProvider } from "context/FlowContext";
-import EditFileModal from "components/EditFileModal";
 
 const reducer = (state, action) => {
   const { type, ...stateToSave } = action;
@@ -96,7 +95,6 @@ const MdPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <FlowContextProvider>
-        <EditFileModal file="hi" />
         <main
           style={{
             display: "flex",
