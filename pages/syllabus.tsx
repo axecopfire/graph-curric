@@ -2,31 +2,82 @@ import { useEffect, useContext, useState } from "react";
 import { getRenderFileList } from "common/commonBrowserUtils";
 import { LazyContextProvider, LazyContext } from "context/LazyContext";
 
-const NumberofWeeksComponent = () => {
+const ManageWeeksAndPhasesComponent = () => {
   const { state, dispatch } = useContext(LazyContext);
 
   return (
     <form>
-      Number of Weeks for the course
-      <br />
-      {!state.weekCapacity && (
-        <>
-          <b>How long do you want the course to take?</b>
-          <br />
-        </>
-      )}
-      <input
-        type="number"
-        min="1"
-        max="51"
-        value={state.weekCapacity || 1}
-        onChange={(e) =>
-          dispatch({
-            type: "SET_STATE",
-            weekCapacity: e.target.value,
-          })
-        }
-      />
+      <fieldset>
+        <legend>Manage weeks and phases</legend>
+        <br />
+        {!state.weekCapacity && (
+          <>
+            <b>How long do you want the course to take?</b>
+            <br />
+          </>
+        )}
+        <label htmlFor="weeks">Number of Weeks for the course</label>
+        <input
+          type="number"
+          name="weeks"
+          min="1"
+          max="51"
+          value={state.weekCapacity || 1}
+          onChange={(e) =>
+            dispatch({
+              type: "SET_STATE",
+              weekCapacity: e.target.value,
+            })
+          }
+        />
+        <fieldset>
+          <label htmlFor="phases">Number of Phases</label>
+          <input
+            type="number"
+            name="phases"
+            min="1"
+            max={state.weekCapacity || 0}
+            onChange={(e) => {
+              e.preventDefault();
+              dispatch({
+                type: "SET_STATE",
+                numberOfPhases: e.target.value,
+              });
+              dispatch({
+                type: "SET_STATE",
+                phases: Array.from(Array(Number(state.numberOfPhases)).keys()),
+              });
+            }}
+          />
+          {state.weekPhaseAllocation} Weeks left to allocate to phases
+          <ul>
+            {state.numberOfPhases &&
+              Array.from(Array(Number(state.numberOfPhases)).keys()).map(
+                (phase, i) => (
+                  <li key={"Phase-" + i}>
+                    <label htmlFor="weeksPerPhase">
+                      Number of weeks for phase {phase + 1}
+                    </label>
+                    <input
+                      type="number"
+                      name="weeksPerPhase"
+                      min="1"
+                      max="10"
+                      onChange={(e) => {
+                        e.preventDefault();
+                        console.log(phase);
+                        // dispatch({
+                        //   type: "SET_STATE",
+                        //   numberOfPhases: e.target.value,
+                        // });
+                      }}
+                    />
+                  </li>
+                )
+              )}
+          </ul>
+        </fieldset>
+      </fieldset>
     </form>
   );
 };
@@ -159,8 +210,7 @@ const BaseSyllabusComponent = () => {
   }, []);
   return (
     <>
-      Hi!
-      <NumberofWeeksComponent />
+      <ManageWeeksAndPhasesComponent />
       <form>
         Unallocated
         <SyllabusListComponent allocated={false} />
