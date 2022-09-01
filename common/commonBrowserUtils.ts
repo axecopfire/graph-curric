@@ -130,7 +130,7 @@ const getElementHeritage = (fileName) => {
 
 export const buildFlowWithNestedElements = async (renderedElementList) => {
   const parentMap = new Map(); // TODO: Iterate through Map and append to result array
-  const updatedListChildren = renderedElementList.map((item) => {});
+  const updatedListChildren = renderedElementList.map((item) => { });
 
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -185,7 +185,49 @@ export const buildFlowWithNestedElements = async (renderedElementList) => {
   return { nodes, edges };
 };
 
-export const getRenderFileList = async () => {
+const reMatchHeading = (toMatch: string) => {
+  /**
+   * [
+   * '# Phase 1',
+   * "## Week 1"
+   * "### CSS"
+   * "- borders"
+   * ]
+   * 
+   */
+  const matchRE = [
+    ['phase', /^#\s/],
+    ['week', /^##\s/],
+    ['topic', /^###\s/],
+    ['subject', /^-\s/]
+  ];
+
+  const matched = matchRE.filter((reArr) => {
+    const [title, re] = reArr;
+    const match = toMatch.match(re);
+
+    return !match ? false : title;
+  });
+
+  if (matched.length > 1) {
+    throw new Error('Too many matches found, oops' + toMatch);
+  }
+  if (matched.length) {
+    return matched[0][0];
+  }
+
+  return false;
+}
+
+type GetRenderFileListReturnType = {
+  renderedMd: string;
+  meta: MetaType;
+  fileName: string;
+  rawMd: string;
+  week?: number;
+}[]
+
+export const getRenderFileList = async (): Promise<GetRenderFileListReturnType> => {
   const getMdFileList = await fetch("/api/getMdFileList").then((r) => r.json());
 
   const fileListToRender = getMdFileList.filter((filePath) =>
@@ -199,6 +241,79 @@ export const getRenderFileList = async () => {
 
   return renderedMd;
 };
+
+export const getSyllabusState = async () => {
+  const getSyllabus = await fetch('/content/Base/Syllabus.md')
+    .then(r => r.text());
+  // https://regex101.com/r/AIQf0C/1
+  // Sourced from CheesusCrustMan
+  // const headingRE = /(?<week>## Week (?<weekNumber>\d)\n(?<weekContent>((?!#).*|\n)*))/gm;
+
+  const syllabusArr = getSyllabus.split('\r');
+  const resultState = {
+    phases: [],
+    weekCapacity: 0,
+    numberOfPhases: 0,
+    weekPhaseAllocated: 0,
+    fileList: [],
+  };
+  let currentPhase = 0;
+  let currentWeek = 0;
+  const fileList = await getRenderFileList();
+
+  resultState.fileList = fileList;
+
+  syllabusArr.forEach(str => {
+    const heading = reMatchHeading(str);
+
+    // Add phase related state
+    if (heading === 'phase') {
+      const headingNumber = str.match(/\d/);
+
+      if (!headingNumber) {
+        throw new Error('All Phases must have numbers in format: # Phase ${number}\n Received: ' + str);
+      }
+      currentPhase = parseInt(headingNumber[0]);
+      resultState.numberOfPhases = currentPhase;
+      resultState.phases.push(0);
+    }
+
+    // Add week related state
+    else if (heading === 'week') {
+      const headingMatch = str.match(/\d/);
+
+      if (!headingMatch) {
+        throw new Error('All Weeks must have numbers in format: # Week ${number}\n Received: ' + str);
+      }
+      const headingNumber = parseInt(headingMatch[0]);
+
+      currentWeek = headingNumber;
+      resultState.weekCapacity = headingNumber;
+      resultState.weekPhaseAllocated = headingNumber;
+
+      const updatePhase = resultState.phases;
+      updatePhase[currentPhase - 1] = updatePhase[currentPhase - 1] + 1;
+
+      resultState.phases = [...updatePhase];
+    }
+
+    else if (heading === 'subject') {
+      const subjectFileName = str.replace('- ', 'public/content/md/') + '.md';
+      const fileIndex = resultState.fileList.findIndex(file => file.fileName === subjectFileName);
+      const updateFileList = resultState.fileList;
+      updateFileList[fileIndex] = {
+        ...updateFileList[fileIndex],
+        week: currentWeek
+      }
+
+
+      resultState.fileList = [...updateFileList];
+    }
+  });
+
+
+  return resultState;
+}
 
 export const rawJsonToFlow = async (jsonList) => {
   const flow = await buildFlow(jsonList, { source: "json" });

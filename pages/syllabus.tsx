@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState, useRef } from "react";
-import { getRenderFileList } from "common/commonBrowserUtils";
+import { getRenderFileList, getSyllabusState } from "common/commonBrowserUtils";
 import { LazyContextProvider, LazyContext } from "context/LazyContext";
 
 const ManageWeeksAndPhasesComponent = () => {
@@ -165,6 +165,7 @@ const AllocateWeekComponent = ({ lesson }) => {
   }
 };
 
+
 const SyllabusListComponent = ({ allocated }) => {
   const { state, dispatch } = useContext(LazyContext);
 
@@ -186,8 +187,7 @@ const SyllabusListComponent = ({ allocated }) => {
       {state.fileList &&
         state.fileList
           .filter(
-            (lesson) =>
-              (allocated && lesson.week) || (!allocated && !lesson.week)
+            (lesson) => (allocated && lesson.week > -1) || (!allocated && !lesson.week)
           )
           .map((lesson) => (
             <li key={lesson.fileName}>
@@ -212,40 +212,6 @@ const SyllabusListComponent = ({ allocated }) => {
     </ul>
   );
 };
-
-const reMatchHeading = (toMatch: string) => {
-  /**
-   * [
-   * '# Phase 1',
-   * "## Week 1"
-   * "### CSS"
-   * "- borders"
-   * ]
-   * 
-   */
-  const matchRE = [
-    ['phase', /^#\s/],
-    ['week', /^##\s/],
-    ['topic', /^###\s/],
-    ['subject', /^-\s/]
-  ];
-
-  const matched = matchRE.filter((reArr) => {
-    const [title, re] = reArr;
-    const match = toMatch.match(re);
-
-    return !match ? false : title;
-  });
-
-  if (matched.length > 1) {
-    throw new Error('Too many matches found, oops' + toMatch);
-  }
-  if (matched.length) {
-    return matched[0][0];
-  }
-
-  return false;
-}
 
 const handleRender = async (e, state) => {
   e.preventDefault();
@@ -272,13 +238,16 @@ const handleRender = async (e, state) => {
 
     const weekIndex = mdArr.findIndex(el => el === `## Week ${file.week}`);
 
-    mdArr.splice(weekIndex, 0, `- ${sanitizedFileName}`);
+    mdArr.splice(weekIndex + 1, 0, `- ${sanitizedFileName}`);
   });
 
   const toSave = mdArr.join('\r');
 
   // Save to FS
-  return fetch(`/api/saveSyllabus?mdFile=${window.encodeURIComponent(toSave)}`)
+  return fetch('/api/saveSyllabus', {
+    method: 'POST',
+    body: toSave
+  })
 };
 
 
@@ -288,10 +257,10 @@ const BaseSyllabusComponent = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const fileList = await getRenderFileList();
+      const initialState = await getSyllabusState();
       dispatch({
         type: "SET_STATE",
-        fileList,
+        ...initialState,
       });
     };
     getData();
@@ -300,21 +269,21 @@ const BaseSyllabusComponent = () => {
   return (
     <div>
       <ManageWeeksAndPhasesComponent />
-      {state.weekCapacity - state.weekPhaseAllocated === 0 && 
-      <>
-        <button onClick={(e) => handleRender(e, state)}>Render</button>
-        <div style={{
-          display: 'flex'
-        }}>
-          <form>
-            Unallocated
-            <SyllabusListComponent allocated={false} />
-          </form>
-          <form>
-            Allocated
-            <SyllabusListComponent allocated={true} />
-          </form>
-        </div>
+      {state.weekCapacity - state.weekPhaseAllocated === 0 &&
+        <>
+          <button onClick={(e) => handleRender(e, state)}>Render</button>
+          <div style={{
+            display: 'flex'
+          }}>
+            <form>
+              Unallocated
+              <SyllabusListComponent allocated={false} />
+            </form>
+            <form>
+              Allocated
+              <SyllabusListComponent allocated={true} />
+            </form>
+          </div>
         </>
       }
     </div>
