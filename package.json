@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "_": "yarn test tests/repoTest.test.ts",
     "test": "jest",
     "test:ci": "jest test ./tests",
+    "_": "echo 'veryaery redeemed'",
+    "test:syllabus": "yarn _ && yarn test tests/repoTest.test.ts",
     "test:watch": "jest --watch",
     "test:md:coverage": "jest test --coverage && istanbul report --include coverage/coverage-final.json text > coverage/istanbul.txt",
     "test:md": "jest test --json  --outputFile=coverage/jestResults.json --coverage && istanbul report --include coverage/coverage-final.json text > coverage/istanbul.txt"
