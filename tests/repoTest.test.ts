@@ -24,6 +24,16 @@ const isFailed = (list) => {
     return failedTest;
 }
 
+const contentFileExists = (fileName) => {
+    const fp = 'public/content/md/' + fileName + '.md';
+    try {
+        fs.statSync(fp)
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
 describe('Validate Syllabus', () => {
     let syllabus;
     let renderedFileList;
@@ -73,7 +83,7 @@ describe('Validate Syllabus', () => {
         let lastHeading = '';
         let currentPhase = 0;
         let currentWeek = 0;
-        const syllabusLines = syllabus.split('\r');
+        const syllabusLines = syllabus.split('\r').map(l => l.replace('\n', ''));
 
         const results = syllabusLines.reduce((acc: any[], line) => {
             const result = {
@@ -81,21 +91,27 @@ describe('Validate Syllabus', () => {
                 matchedSection: reMatchHeading(line),
                 error: []
             }
+            const addError = (message) => {
+                result.error.push(message + ' ' + line);
+            }
             const heading = result.matchedSection;
+            if (heading === false) {
+                addError('No heading was found')
+            }
 
             if (heading === 'phase') {
                 const headingMatch = line.match(/\d/);
                 if (!headingMatch) {
-                    result.error.push('Phase must have a number')
+                    addError('Phase must have a number')
                 } else {
                     const headingNumber = parseInt(headingMatch[0]);
 
                     if (lastHeading === 'phase') {
-                        result.error.push("A Phase can't follow a phase");
+                        addError("A Phase can't follow a phase");
                     }
 
                     if (currentPhase + 1 !== headingNumber) {
-                        result.error.push("Phases need to be sequential");
+                        addError("Phases need to be sequential");
                     }
                     currentPhase = headingNumber;
                 }
@@ -108,16 +124,16 @@ describe('Validate Syllabus', () => {
                 const headingMatch = line.match(/\d/);
 
                 if (!headingMatch) {
-                    result.error.push('Week must have a number')
+                    addError('Week must have a number')
                 } else {
                     const headingNumber = parseInt(headingMatch[0]);
 
                     if (!inPhase) {
-                        result.error.push('Week must be under a phase.')
+                        addError('Week must be under a phase.')
                     }
 
                     if (currentWeek + 1 !== headingNumber) {
-                        result.error.push("Weeks need to be sequential");
+                        addError("Weeks need to be sequential");
                     }
 
                     currentWeek = headingNumber;
@@ -127,10 +143,14 @@ describe('Validate Syllabus', () => {
 
             if (heading === 'subject') {
                 if (!inPhase) {
-                    result.error.push('Content must be in a phase');
+                    addError('Content must be in a phase');
                 }
                 if (!inWeek) {
-                    result.error.push('Content must be in a week');
+                    addError('Content must be in a week');
+                }
+
+                if (!contentFileExists(line.replace('- ', ''))) {
+                    addError('File is missing for this lesson');
                 }
             }
 
@@ -140,10 +160,6 @@ describe('Validate Syllabus', () => {
         const failedTest = isFailed(results);
         expect(failedTest).toEqual(false);
     })
-
-    it('Syllabus has valid links', () => {
-
-    });
 });
 
 
