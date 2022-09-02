@@ -185,7 +185,9 @@ export const buildFlowWithNestedElements = async (renderedElementList) => {
   return { nodes, edges };
 };
 
-const reMatchHeading = (toMatch: string) => {
+
+
+export const reMatchHeading = (toMatch: string) => {
   /**
    * [
    * '# Phase 1',
@@ -219,6 +221,17 @@ const reMatchHeading = (toMatch: string) => {
   return false;
 }
 
+export const getFileListFromSyllabus = (syllabus: string) => {
+  const fileListFromSyllabus = syllabus.split('\r');
+  return fileListFromSyllabus.reduce((acc, line) => {
+    const headingMatch = reMatchHeading(line);
+    if (headingMatch === 'subject') {
+      return [...acc, `${line.replace('- ', '')}.md`];
+    }
+    return acc;
+  }, []);
+}
+
 type GetRenderFileListReturnType = {
   renderedMd: string;
   meta: MetaType;
@@ -242,14 +255,8 @@ export const getRenderFileList = async (): Promise<GetRenderFileListReturnType> 
   return renderedMd;
 };
 
-export const getSyllabusState = async () => {
-  const getSyllabus = await fetch('/content/Base/Syllabus.md')
-    .then(r => r.text());
-  // https://regex101.com/r/AIQf0C/1
-  // Sourced from CheesusCrustMan
-  // const headingRE = /(?<week>## Week (?<weekNumber>\d)\n(?<weekContent>((?!#).*|\n)*))/gm;
-
-  const syllabusArr = getSyllabus.split('\r');
+export const mergeSyllabusAndFileListToState = (syllabus, fileList) => {
+  const syllabusArr = syllabus.split('\r');
   const resultState = {
     phases: [],
     weekCapacity: 0,
@@ -259,7 +266,7 @@ export const getSyllabusState = async () => {
   };
   let currentPhase = 0;
   let currentWeek = 0;
-  const fileList = await getRenderFileList();
+
 
   resultState.fileList = fileList;
 
@@ -306,13 +313,21 @@ export const getSyllabusState = async () => {
         week: currentWeek
       }
 
-
       resultState.fileList = [...updateFileList];
     }
   });
-
-
   return resultState;
+
+}
+
+export const getSyllabusState = async () => {
+  const getSyllabus = await fetch('/content/Base/Syllabus.md')
+    .then(r => r.text());
+  const fileList = await getRenderFileList();
+  // https://regex101.com/r/AIQf0C/1
+  // Sourced from @CheesusCrustMan
+  // const headingRE = /(?<week>## Week (?<weekNumber>\d)\n(?<weekContent>((?!#).*|\n)*))/gm;
+  return mergeSyllabusAndFileListToState(getSyllabus, fileList);
 }
 
 export const rawJsonToFlow = async (jsonList) => {

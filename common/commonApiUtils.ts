@@ -20,9 +20,15 @@ export const getMarkdownFileNames = (
 export const getStaticMd = async (root?: string, fileList = []) => {
   const result: RawMdDataType = [];
   const cwd = process.cwd();
-  const fileNames = fileList.length
-    ? fileList
-    : await getMarkdownFileNames(root);
+  let fileNames = [];
+  if (fileList) {
+    fileNames = fileList;
+    if (root) {
+      fileNames = fileNames.map(f => root + f);
+    }
+  } else {
+    fileNames = await getMarkdownFileNames(root)
+  }
 
   for (const fileName of fileNames) {
     const md = await fs.readFile(path.resolve(cwd, fileName), {

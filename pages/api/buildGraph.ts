@@ -26,7 +26,9 @@ const exampleGraph = {
 
 const handler = async (req, res) => {
   const flowData = JSON.parse(req.query.flow);
-  const cleanedNodes = flowData.nodes.map((datum) => ({
+  const nodes = flowData.nodes;
+  if (!Array.isArray(nodes)) throw new Error('Nodes must exist on flow data');
+  const cleanedNodes = nodes.map((datum) => ({
     ...datum,
     width: 200,
     height: 100,

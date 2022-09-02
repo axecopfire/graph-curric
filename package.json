@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
+    "test:ci": "jest test ./tests",
     "test:watch": "jest --watch",
     "test:md:coverage": "jest test --coverage && istanbul report --include coverage/coverage-final.json text > coverage/istanbul.txt",
     "test:md": "jest test --json  --outputFile=coverage/jestResults.json --coverage && istanbul report --include coverage/coverage-final.json text > coverage/istanbul.txt"
@@ -19,6 +20,7 @@
     "markdown-it": "^13.0.1",
     "markdown-it-metadata-block": "^1.0.2",
     "next": "^12.2.6-canary.1",
+    "node-fetch": "^3.2.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-flow-renderer": "^10.3.11",
