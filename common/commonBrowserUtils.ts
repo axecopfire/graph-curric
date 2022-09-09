@@ -5,6 +5,7 @@ import { Node, Edge } from "react-flow-renderer";
 
 import { RawMdDataType } from "./commonApiUtils";
 import { ROOT_CONTENT_PATH } from "./constants";
+import { SyllabusStateContextType } from 'context/SyllabusContext';
 
 export type MetaType = {
   title: string;
@@ -206,6 +207,7 @@ export const reMatchHeading = (toMatch: string) => {
 
   const matched = matchRE.filter((reArr) => {
     const [title, re] = reArr;
+    // For some reason we're getting extra \n
     const match = toMatch.match(re);
 
     return !match ? false : title;
@@ -232,7 +234,7 @@ export const getFileListFromSyllabus = (syllabus: string) => {
   }, []);
 }
 
-type GetRenderFileListReturnType = {
+export type GetRenderFileListReturnType = {
   renderedMd: string;
   meta: MetaType;
   fileName: string;
@@ -257,7 +259,7 @@ export const getRenderFileList = async (): Promise<GetRenderFileListReturnType> 
 
 export const mergeSyllabusAndFileListToState = (syllabus, fileList) => {
   const syllabusArr = syllabus.split('\r');
-  const resultState = {
+  const resultState: SyllabusStateContextType = {
     phases: [],
     weekCapacity: 0,
     numberOfPhases: 0,
@@ -270,7 +272,9 @@ export const mergeSyllabusAndFileListToState = (syllabus, fileList) => {
 
   resultState.fileList = fileList;
 
-  syllabusArr.forEach(str => {
+
+  const cleanedSyllabusArr = syllabusArr.map(s => s.replace('\n', ''));
+  cleanedSyllabusArr.forEach(str => {
     const heading = reMatchHeading(str);
 
     // Add phase related state
@@ -282,7 +286,7 @@ export const mergeSyllabusAndFileListToState = (syllabus, fileList) => {
       }
       currentPhase = parseInt(headingNumber[0]);
       resultState.numberOfPhases = currentPhase;
-      resultState.phases.push(0);
+      resultState.phases.push({ numberOfWeeks: 0, description: '' });
     }
 
     // Add week related state
@@ -299,18 +303,23 @@ export const mergeSyllabusAndFileListToState = (syllabus, fileList) => {
       resultState.weekPhaseAllocated = headingNumber;
 
       const updatePhase = resultState.phases;
-      updatePhase[currentPhase - 1] = updatePhase[currentPhase - 1] + 1;
+      updatePhase[currentPhase - 1] = {
+        ...updatePhase[currentPhase - 1],
+        numberOfWeeks: updatePhase[currentPhase - 1].numberOfWeeks + 1
+      };
 
       resultState.phases = [...updatePhase];
     }
-
     else if (heading === 'subject') {
       const subjectFileName = str.replace('- ', 'public/content/md/') + '.md';
-      const fileIndex = resultState.fileList.findIndex(file => file.fileName === subjectFileName);
+      const fileIndex = resultState.fileList.findIndex(file => file.fileName == subjectFileName);
       const updateFileList = resultState.fileList;
-      updateFileList[fileIndex] = {
-        ...updateFileList[fileIndex],
-        week: currentWeek
+
+      if (fileIndex > -1) {
+        updateFileList[fileIndex] = {
+          ...updateFileList[fileIndex],
+          week: currentWeek
+        }
       }
 
       resultState.fileList = [...updateFileList];
@@ -341,7 +350,6 @@ export const rawMdToFlow = (mdList) => {
 };
 
 export const renderedFileListToFlow = async (fileList) => {
-  console.log({ fileList });
   // const renderedFlow = await buildFlowWithNestedElements(fileList);
   const renderedFlow = await buildFlow(fileList, { source: "md" });
 
