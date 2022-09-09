@@ -5,7 +5,6 @@ import PhaseEditorComponent from './PhaseEditor';
 
 export default function ManageWeeksAndPhasesComponent() {
     const { state, dispatch } = useContext(SyllabusContext);
-    const sumArray = (arr) => arr.reduce((partialSum, a) => partialSum + a, 0);
 
     return (
         <form>
@@ -49,7 +48,7 @@ export default function ManageWeeksAndPhasesComponent() {
                                 type: "SET_STATE",
                                 numberOfPhases: numberOfPhases,
                                 phases: phaseArray,
-                                weekPhaseAllocated: sumArray(phaseArray)
+                                weekPhaseAllocated: phaseArray.reduce((acc, n) => n.numberOfWeeks + acc, 0)
                             });
                         }}
                     />
