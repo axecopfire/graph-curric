@@ -1,40 +1,42 @@
-import { useContext } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { SyllabusContext } from "context/SyllabusContext";
+import WeekEditor from './WeekEditor';
+import useSyllabusTotals from 'hooks/useSyllabusTotals';
 
 
 export default function PhaseEditorComponent({ phase, i }) {
     const { state, dispatch } = useContext(SyllabusContext);
+    const { getNumberOfWeeksForPhase, totalOfAllocatedWeeks } = useSyllabusTotals();
+    const numberOfWeeks = getNumberOfWeeksForPhase(i);
+
+    const weekList = state.weeks.reduce((acc, week, index) => {
+        const element = <li key={`Week-${index}`}><WeekEditor week={week} i={index} /></li>;
+        return week.phaseId === i ? [...acc, element] : acc;
+    }, [])
 
     return (
         <fieldset>
             <legend>Phase {i + 1}{phase.description ? `: ${phase.description}` : ''}</legend>
+            <button onClick={(e) => {
+                e.preventDefault();
+                return dispatch({
+                    type: 'REMOVE_PHASE',
+                    phaseId: i
+                })
+            }}>- phase</button>
+            <br />
             <label htmlFor="weeksPerPhase">
-                Number of weeks
+                Number of weeks: {numberOfWeeks}
             </label>
-            <input
-                type="number"
-                name="weeksPerPhase"
-                min="1"
-                maxLength={3}
-                value={state.phases[i].numberOfWeeks}
-                max={(state.weekCapacity - state.weekPhaseAllocated) + phase.numberOfWeeks}
-                onChange={(e) => {
-                    e.preventDefault();
-                    const updatedPhaseArray = [...state.phases];
-                    updatedPhaseArray[i] = {
-                        ...updatedPhaseArray[i],
-                        numberOfWeeks: +e.target.value
-                    };
-
-                    const weekPhaseAllocated = updatedPhaseArray.reduce((acc, n) => n.numberOfWeeks + acc, 0);
-
-                    dispatch({
-                        type: "SET_STATE",
-                        phases: updatedPhaseArray,
-                        weekPhaseAllocated
-                    });
-                }}
-            />
+            <button onClick={(e) => {
+                e.preventDefault();
+                return dispatch({
+                    type: 'ADD_WEEK',
+                    phaseId: i
+                })
+            }}
+                disabled={state.weekCapacity <= totalOfAllocatedWeeks}
+            >+ week</button>
             <br />
             <label>
                 Description
@@ -42,19 +44,22 @@ export default function PhaseEditorComponent({ phase, i }) {
                     value={phase.description}
                     onChange={(e) => {
                         e.preventDefault();
-                        const updatedPhaseArray = [...state.phases];
-                        updatedPhaseArray[i] = {
-                            ...updatedPhaseArray[i],
-                            description: e.target.value
-                        };
                         dispatch({
-                            type: 'SET_STATE',
-                            phases: updatedPhaseArray,
-                        })
+                            type: 'UPDATE_PHASES_ARRAY',
+                            field: {
+                                name: 'description',
+                                value: e.target.value
+                            },
+                            index: i
+                        });
                     }}
                 />
-
             </label>
+            <fieldset>
+                <ul>
+                    {weekList}
+                </ul>
+            </fieldset>
         </fieldset>
     )
 }

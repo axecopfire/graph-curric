@@ -1,10 +1,15 @@
 import { useRef, useEffect, useContext } from 'react';
 import { SyllabusContext } from 'context/SyllabusContext';
 import PhaseEditorComponent from './PhaseEditor';
+import useSyllabusTotals from 'hooks/useSyllabusTotals';
 
 
 export default function ManageWeeksAndPhasesComponent() {
     const { state, dispatch } = useContext(SyllabusContext);
+    const {
+        totalOfAllocatedWeeks
+    } = useSyllabusTotals();
+
 
     return (
         <form>
@@ -21,7 +26,7 @@ export default function ManageWeeksAndPhasesComponent() {
                 <input
                     type="number"
                     name="weeks"
-                    min={state.phases.reduce((acc, phase) => phase.numberOfWeeks + acc, 0)}
+                    min={totalOfAllocatedWeeks}
                     max="51"
                     value={state.weekCapacity}
                     onChange={(e) =>
@@ -33,27 +38,16 @@ export default function ManageWeeksAndPhasesComponent() {
                 />
                 <fieldset>
                     <label htmlFor="phases">Number of Phases</label>
-                    <input
-                        type="number"
-                        name="phases"
-                        min="1"
-                        max={state.weekCapacity}
-                        value={state.numberOfPhases || 1}
-                        onChange={(e) => {
+                    <button
+                        onClick={(e) => {
                             e.preventDefault();
-                            const numberOfPhases = +e.target.value;
-                            const phaseArray = Array(numberOfPhases).fill({ numberOfWeeks: 1, description: '' });
-
                             dispatch({
-                                type: "SET_STATE",
-                                numberOfPhases: numberOfPhases,
-                                phases: phaseArray,
-                                weekPhaseAllocated: phaseArray.reduce((acc, n) => n.numberOfWeeks + acc, 0)
-                            });
+                                type: 'ADD_PHASE'
+                            })
                         }}
-                    />
+                    >+ phase</button>
                     <br /><b>
-                        {state.weekCapacity} - {state.weekPhaseAllocated} = {state.weekCapacity - state.weekPhaseAllocated || 0} </b> Weeks left to allocate to phases
+                        {state.weekCapacity} - {totalOfAllocatedWeeks} = {state.weekCapacity - totalOfAllocatedWeeks || 0} </b> Weeks left to allocate to phases
                     <br />
                     <ul>
                         {state?.phases?.length &&

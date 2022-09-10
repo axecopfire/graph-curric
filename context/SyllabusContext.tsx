@@ -7,26 +7,108 @@ export type ReducerProps = {
 };
 
 export const initialContext = {
-  phases: [{ numberOfWeeks: 1, description: '' }],
+  phases: [],
+  weeks: [],
   weekCapacity: 1,
-  numberOfPhases: 1,
-  weekPhaseAllocated: 1,
   fileList: []
 };
 
+export type SyllabusWeekType = { description: string; phaseId: number; }
+
 export type SyllabusStateContextType = {
-  phases: { numberOfWeeks: number; description: string; }[];
+  phases: { description: string; }[];
+  weeks: SyllabusWeekType[]
   weekCapacity: number;
-  numberOfPhases: number;
-  weekPhaseAllocated: number;
   fileList: GetRenderFileListReturnType
 }
 
-const reducer = (state, action) => {
+
+type UpdateArrayItemFieldType = {
+  state: SyllabusStateContextType;
+  arrayName: 'phases' | 'weeks';
+  field: {
+    name: 'description' | 'phaseId';
+    value: string | number;
+  };
+  index: number;
+}
+const updateArrayItemField = ({ state, arrayName, field, index }: UpdateArrayItemFieldType) => {
+  const arrayToUpdate = [...state[arrayName]];
+  arrayToUpdate[index] = {
+    ...arrayToUpdate[index],
+    [field.name]: field.value
+  }
+  return arrayToUpdate;
+}
+
+
+const getArrayName = (type) => {
+  if (type === 'SET_STATE') return;
+  if (type.includes('PHASE')) return 'phases';
+  if (type.includes('WEEK')) return 'weeks';
+  throw new Error('SyllabusContext has an unrecognized action type: ' + type);
+}
+
+const removePhase = (index, state) => {
+  let tmpWeekArr = [...state.weeks];
+  let tmpPhaseArr = [...state.phases];
+  tmpWeekArr = tmpWeekArr.filter(w => w.phaseId !== index);
+  tmpPhaseArr.splice(index, 1);
+
+  return {
+    weeks: tmpWeekArr,
+    phases: tmpPhaseArr
+  }
+}
+
+const reducer = (state, action): SyllabusStateContextType => {
   const { type, ...stateToSave } = action;
+  const arrayName = getArrayName(action.type);
+
   switch (action.type) {
     case "SET_STATE":
       return { ...state, ...stateToSave };
+    case 'ADD_PHASE': {
+      const tmpArr = [...state.phases, { description: '' }];
+      return {
+        ...state,
+        phases: [...tmpArr],
+      }
+    }
+    case 'ADD_WEEK':
+      return {
+        ...state,
+        weeks: [...state.weeks, { phaseId: action.phaseId, description: '' }].sort((a, b) => a.phaseId > b.phaseId ? 1 : -1),
+      }
+    case 'REMOVE_WEEK': {
+      const tmpArr = [...state.weeks]
+      tmpArr.splice(action.index, 1);
+      return {
+        ...state,
+        weeks: tmpArr,
+      }
+    }
+    case 'REMOVE_PHASE': {
+      const { weeks, phases } = removePhase(action.index, state);
+      return {
+        ...state,
+        weeks,
+        phases
+      }
+    }
+    case 'UPDATE_PHASES_ARRAY':
+    case 'UPDATE_WEEKS_ARRAY':
+      return {
+        ...state,
+        [arrayName]: updateArrayItemField({
+          state,
+          arrayName,
+          field: action.field,
+          index: action.index
+        })
+      }
+    default:
+      return state;
   }
 };
 

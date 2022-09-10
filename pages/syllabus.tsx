@@ -1,11 +1,9 @@
 import { useEffect, useContext, useState, useRef } from "react";
-import { getRenderFileList, getSyllabusState } from "common/commonBrowserUtils";
+import { getSyllabusState } from "components/Syllabus/syllabusBrowserUtils";
 import { SyllabusContextProvider, SyllabusContext } from "context/SyllabusContext";
 import ManageWeeksAndPhasesComponent from 'components/Syllabus/ManageWeeksAndPhases'
 import SyllabusListComponent from 'components/Syllabus/SyllabusList';
-
-
-
+import useSyllabusTotals from 'hooks/useSyllabusTotals'
 
 const handleRender = async (e, state) => {
   e.preventDefault();
@@ -48,6 +46,7 @@ const handleRender = async (e, state) => {
 const BaseSyllabusComponent = ({ initialState }) => {
   const { state, dispatch } = useContext(SyllabusContext);
   const isLoadedRef = useRef(false);
+  const { totalOfAllocatedWeeks, setInitialStateFromSyllabusAndFileList } = useSyllabusTotals();
 
 
   /** 
@@ -59,11 +58,9 @@ const BaseSyllabusComponent = ({ initialState }) => {
   */
   useEffect(() => {
     const getData = async () => {
-      const initialState = await getSyllabusState();
-      dispatch({
-        type: "SET_STATE",
-        ...initialState,
-      });
+      const { syllabusText, fileList } = await getSyllabusState();
+      console.log({ fileList, syllabusText })
+      setInitialStateFromSyllabusAndFileList(syllabusText, fileList);
     }
     if (!isLoadedRef.current) {
       getData();
@@ -74,7 +71,7 @@ const BaseSyllabusComponent = ({ initialState }) => {
   return (
     <div>
       <ManageWeeksAndPhasesComponent />
-      {state.weekCapacity - state.weekPhaseAllocated === 0 &&
+      {state.weekCapacity - totalOfAllocatedWeeks === 0 &&
         <>
           <button onClick={(e) => handleRender(e, state)}>Render</button>
           <div style={{
