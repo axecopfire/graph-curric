@@ -5,48 +5,13 @@ import ManageWeeksAndPhasesComponent from 'components/Syllabus/ManageWeeksAndPha
 import SyllabusListComponent from 'components/Syllabus/SyllabusList';
 import useSyllabusTotals from 'hooks/useSyllabusTotals'
 
-const handleRender = async (e, state) => {
-  e.preventDefault();
-  const mdArr = [];
-  let weekCounter = 1;
-
-  // Build Phases/Weeks
-  state.phases.forEach((numOfWks: number, i: number) => {
-    const arrayOWeeks = Array(numOfWks).fill('');
-    arrayOWeeks.forEach((_, j) => {
-      if (!j) mdArr.push(
-        '# Phase ' + (i + 1)
-      )
-      mdArr.push('## Week ' + weekCounter)
-      weekCounter++;
-    });
-  })
-
-  // Stick Topics in weeks
-  const allocatedFiles = state.fileList.filter((file) => file.week);
-
-  allocatedFiles.forEach((file) => {
-    const sanitizedFileName = file.fileName.replace('public/content/md/', '').replace('.md', '');
-
-    const weekIndex = mdArr.findIndex(el => el === `## Week ${file.week}`);
-
-    mdArr.splice(weekIndex + 1, 0, `- ${sanitizedFileName}`);
-  });
-
-  const toSave = mdArr.join('\r');
-
-  // Save to FS
-  return fetch('/api/saveSyllabus', {
-    method: 'POST',
-    body: toSave
-  })
-};
 
 // Cause of how I'm weirdly doing context
 const BaseSyllabusComponent = ({ initialState }) => {
   const { state, dispatch } = useContext(SyllabusContext);
   const isLoadedRef = useRef(false);
-  const { totalOfAllocatedWeeks, setInitialStateFromSyllabusAndFileList } = useSyllabusTotals();
+  const { totalOfAllocatedWeeks, setInitialStateFromSyllabusAndFileList, handleSyllabusText } = useSyllabusTotals();
+  const [renderedSyllabus, setRenderedSyllabus] = useState('');
 
 
   /** 
@@ -59,8 +24,8 @@ const BaseSyllabusComponent = ({ initialState }) => {
   useEffect(() => {
     const getData = async () => {
       const { syllabusText, fileList } = await getSyllabusState();
-      console.log({ fileList, syllabusText })
       setInitialStateFromSyllabusAndFileList(syllabusText, fileList);
+      setRenderedSyllabus(syllabusText);
     }
     if (!isLoadedRef.current) {
       getData();
@@ -69,11 +34,37 @@ const BaseSyllabusComponent = ({ initialState }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        width: '100%'
+      }}
+    >
       <ManageWeeksAndPhasesComponent />
+      <div>
+        <button onClick={async (e) => {
+          e.preventDefault();
+          await handleSyllabusText(renderedSyllabus, false);
+        }}>Render</button>
+        <button onClick={(e) => {
+          e.preventDefault();
+          handleSyllabusText(renderedSyllabus, true)
+        }}>Update Syllabus</button>
+        <br />
+        <br />
+        <textarea
+          cols={50}
+          rows={30}
+          value={renderedSyllabus}
+          onChange={e => {
+            e.preventDefault();
+            setRenderedSyllabus(e.target.value)
+          }}>
+        </textarea>
+      </div>
       {state.weekCapacity - totalOfAllocatedWeeks === 0 &&
         <>
-          <button onClick={(e) => handleRender(e, state)}>Render</button>
           <div style={{
             display: 'flex'
           }}>

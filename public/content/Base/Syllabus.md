@@ -1,8 +1,1 @@
-# Phase 1
-## Week 1
-- css/accessibility
-## Week 2
-- css/borders
-## Week 3
-- css/colors
-- css/box-model
+# Phase 1## Week 1- css/accessibility## Week 2- css/css-architecture- css/borders## Week 3- css/colors- css/box-model# Phase 2## Week 4- css/css-frameworks

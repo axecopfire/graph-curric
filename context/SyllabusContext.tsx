@@ -43,7 +43,11 @@ const updateArrayItemField = ({ state, arrayName, field, index }: UpdateArrayIte
 
 
 const getArrayName = (type) => {
-  if (type === 'SET_STATE') return;
+  const skipActions = [
+    'SET_STATE',
+    'RESET_STATE'
+  ]
+  if (skipActions.includes(type)) return;
   if (type.includes('PHASE')) return 'phases';
   if (type.includes('WEEK')) return 'weeks';
   throw new Error('SyllabusContext has an unrecognized action type: ' + type);
@@ -68,6 +72,8 @@ const reducer = (state, action): SyllabusStateContextType => {
   switch (action.type) {
     case "SET_STATE":
       return { ...state, ...stateToSave };
+    case 'RESET_STATE':
+      return initialContext
     case 'ADD_PHASE': {
       const tmpArr = [...state.phases, { description: '' }];
       return {

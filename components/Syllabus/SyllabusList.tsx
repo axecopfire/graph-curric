@@ -29,13 +29,16 @@ export default function SyllabusListComponent({ allocated }) {
                         <li key={lesson.fileName}>
                             {lesson.fileName.replace("public/content/md/", "")}{" "}
                             {allocated ? (
-                                <button
-                                    onClick={(e) => {
-                                        handleDeAllocate(e, lesson);
-                                    }}
-                                >
-                                    👈
-                                </button>
+                                <>
+                                    <button
+                                        onClick={(e) => {
+                                            handleDeAllocate(e, lesson);
+                                        }}
+                                    >
+                                        👈
+                                    </button>
+                                    &nbsp;Week: {lesson.week}
+                                </>
                             ) : (
                                 <>
                                     {state.weekCapacity && (

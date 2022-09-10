@@ -9,14 +9,20 @@ export default function useSyllabusTotals() {
     const getNumberOfWeeksForPhase = (i: number) => state.weeks.filter(w => w.phaseId === i).reduce((acc) => acc + 1, 0);
     const totalOfAllocatedWeeks = state.weeks.reduce((acc) => acc + 1, 0);
 
+
+
+
     const setInitialStateFromSyllabusAndFileList = (syllabus, fileList) => {
-        const syllabusArr = syllabus.split('\r');
+        // https://stackoverflow.com/a/21712066
+        const syllabusArr = syllabus.split(/\r?\n|\r|\n/g);
         let currentPhase = 0;
         let currentWeek = 0;
         let resultStateFileList = [...fileList];
+        dispatch({
+            type: 'RESET_STATE'
+        })
 
-        const cleanedSyllabusArr = syllabusArr.map(s => s.replace('\n', ''));
-        cleanedSyllabusArr.forEach(str => {
+        syllabusArr.forEach(str => {
             const heading = reMatchHeading(str);
 
             // Add phase related state
@@ -73,9 +79,51 @@ export default function useSyllabusTotals() {
         });
     }
 
+    const handleSyllabusText = async (syllabusText, updateSyllabus) => {
+        const mdArr = [];
+        let weekCounter = 1;
+
+        setInitialStateFromSyllabusAndFileList(syllabusText, state.fileList)
+
+        // Build Phases/Weeks
+        state.phases.forEach((phase, i: number) => {
+            const arrayOWeeks = state.weeks.filter(w => w.phaseId === i);
+            arrayOWeeks.forEach((_, j) => {
+                if (!j) mdArr.push(
+                    '# Phase ' + (i + 1)
+                )
+                mdArr.push('## Week ' + weekCounter)
+                weekCounter++;
+            });
+        })
+
+        // Stick Topics in weeks
+        const allocatedFiles = state.fileList.filter((file) => file.week);
+
+        allocatedFiles.forEach((file) => {
+            const sanitizedFileName = file.fileName.replace('public/content/md/', '').replace('.md', '');
+
+            const weekIndex = mdArr.findIndex(el => el === `## Week ${file.week}`);
+
+            mdArr.splice(weekIndex + 1, 0, `- ${sanitizedFileName}`);
+        });
+
+        const toSave = mdArr.join('\r');
+
+        // Save to FS
+        if (updateSyllabus) {
+            await fetch('/api/saveSyllabus', {
+                method: 'POST',
+                body: toSave
+            })
+        }
+        return toSave
+    };
+
     return {
         getNumberOfWeeksForPhase,
         setInitialStateFromSyllabusAndFileList,
+        handleSyllabusText,
         totalOfAllocatedWeeks
     }
 }
