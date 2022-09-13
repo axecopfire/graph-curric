@@ -45,7 +45,8 @@ const BaseSyllabusComponent = ({ initialState }) => {
       <div>
         <button onClick={async (e) => {
           e.preventDefault();
-          await handleSyllabusText(renderedSyllabus, false);
+          const syllabusText = await handleSyllabusText(renderedSyllabus, false);
+          setRenderedSyllabus(syllabusText)
         }}>Render</button>
         <button onClick={(e) => {
           e.preventDefault();

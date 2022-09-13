@@ -28,19 +28,22 @@ export default function useSyllabusTotals() {
             // Add phase related state
             if (heading === 'phase') {
                 const headingNumber = str.match(/\d/);
+                const description = str.match(/:.*/);
 
                 if (!headingNumber) {
                     throw new Error('All Phases must have numbers in format: # Phase ${number}\n Received: ' + str);
                 }
                 currentPhase = parseInt(headingNumber[0]);
                 dispatch({
-                    type: 'ADD_PHASE'
+                    type: 'ADD_PHASE',
+                    description
                 })
             }
 
             // Add week related state
             else if (heading === 'week') {
                 const headingMatch = str.match(/\d/);
+                const description = str.match(/:.*/);
 
                 if (!headingMatch) {
                     throw new Error('All Weeks must have numbers in format: # Week ${number}\n Received: ' + str);
@@ -54,7 +57,8 @@ export default function useSyllabusTotals() {
                 })
                 dispatch({
                     type: 'ADD_WEEK',
-                    phaseId: currentPhase - 1
+                    phaseId: currentPhase - 1,
+                    description,
                 })
             }
             else if (heading === 'subject') {
@@ -83,16 +87,19 @@ export default function useSyllabusTotals() {
         const mdArr = [];
         let weekCounter = 1;
 
-        setInitialStateFromSyllabusAndFileList(syllabusText, state.fileList)
+        // setInitialStateFromSyllabusAndFileList(syllabusText, state.fileList)
 
         // Build Phases/Weeks
         state.phases.forEach((phase, i: number) => {
             const arrayOWeeks = state.weeks.filter(w => w.phaseId === i);
-            arrayOWeeks.forEach((_, j) => {
+            arrayOWeeks.forEach((week, j) => {
+                const phaseDescription = phase.description ? `: ${phase.description}` : '';
                 if (!j) mdArr.push(
-                    '# Phase ' + (i + 1)
+                    `# Phase ${i + 1}${phaseDescription}`
                 )
-                mdArr.push('## Week ' + weekCounter)
+                console.log(phase.description)
+                const weekDescription = week.description ? `: ${week.description}` : '';
+                mdArr.push(`## Week ${weekCounter}${weekDescription}`)
                 weekCounter++;
             });
         })
@@ -103,7 +110,7 @@ export default function useSyllabusTotals() {
         allocatedFiles.forEach((file) => {
             const sanitizedFileName = file.fileName.replace('public/content/md/', '').replace('.md', '');
 
-            const weekIndex = mdArr.findIndex(el => el === `## Week ${file.week}`);
+            const weekIndex = mdArr.findIndex(el => el.includes(`## Week ${file.week}`));
 
             mdArr.splice(weekIndex + 1, 0, `- ${sanitizedFileName}`);
         });

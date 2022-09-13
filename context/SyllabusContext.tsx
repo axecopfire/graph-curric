@@ -75,7 +75,7 @@ const reducer = (state, action): SyllabusStateContextType => {
     case 'RESET_STATE':
       return initialContext
     case 'ADD_PHASE': {
-      const tmpArr = [...state.phases, { description: '' }];
+      const tmpArr = [...state.phases, { description: action.description ? action.description : '' }];
       return {
         ...state,
         phases: [...tmpArr],
@@ -84,7 +84,10 @@ const reducer = (state, action): SyllabusStateContextType => {
     case 'ADD_WEEK':
       return {
         ...state,
-        weeks: [...state.weeks, { phaseId: action.phaseId, description: '' }].sort((a, b) => a.phaseId > b.phaseId ? 1 : -1),
+        weeks: [...state.weeks, {
+          phaseId: action.phaseId,
+          description: action.description ? action.description : ''
+        }].sort((a, b) => a.phaseId > b.phaseId ? 1 : -1),
       }
     case 'REMOVE_WEEK': {
       const tmpArr = [...state.weeks]
