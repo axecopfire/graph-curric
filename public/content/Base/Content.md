@@ -3,7 +3,7 @@
   - Command Line
     - Shells
   - VS Code​
-  - Markdown ​
+  - Markdown
   - Github
     - Github ReadMe Profile
     - Github Discussions
@@ -49,7 +49,6 @@
     - Lighthouse tab
     - ARIA color contrast
 - Design
-
   - Laws of UX
   - Collaborative Design
     - Figma,Figjam
@@ -111,8 +110,12 @@
 - Nodejs
   - package management
     - npm
-    - yarn
     - dependencies, dev-dependencies
     - scripts
   - testing
     - jest
+- Accessibility
+  - ARIA Labels
+  - Tab index
+  - keyboard navigation
+  - screenreader
