@@ -22,13 +22,21 @@ export default function useSyllabusTotals() {
             type: 'RESET_STATE'
         })
 
-        syllabusArr.forEach(str => {
+        syllabusArr.forEach((str: string) => {
             const heading = reMatchHeading(str);
+
+            const cleanDescription = (description: RegExpMatchArray) => {
+                if (description !== null) {
+                    return description[0].replace(': ', '');
+                }
+                return '';
+            }
 
             // Add phase related state
             if (heading === 'phase') {
                 const headingNumber = str.match(/\d/);
-                const description = str.match(/:.*/);
+                const description = cleanDescription(str.match(/:.*/));
+
 
                 if (!headingNumber) {
                     throw new Error('All Phases must have numbers in format: # Phase ${number}\n Received: ' + str);
@@ -43,7 +51,7 @@ export default function useSyllabusTotals() {
             // Add week related state
             else if (heading === 'week') {
                 const headingMatch = str.match(/\d/);
-                const description = str.match(/:.*/);
+                const description = cleanDescription(str.match(/:.*/));
 
                 if (!headingMatch) {
                     throw new Error('All Weeks must have numbers in format: # Week ${number}\n Received: ' + str);
@@ -89,16 +97,23 @@ export default function useSyllabusTotals() {
 
         // setInitialStateFromSyllabusAndFileList(syllabusText, state.fileList)
 
+        const addSemiColonIfNeeded = (description: string | undefined) => {
+            if (!description) return ''
+            if (!description.includes(':')) return ': ' + description;
+            return description;
+        }
+
         // Build Phases/Weeks
         state.phases.forEach((phase, i: number) => {
             const arrayOWeeks = state.weeks.filter(w => w.phaseId === i);
             arrayOWeeks.forEach((week, j) => {
-                const phaseDescription = phase.description ? `: ${phase.description}` : '';
+                const phaseDescription = addSemiColonIfNeeded(phase.description);
+
                 if (!j) mdArr.push(
                     `# Phase ${i + 1}${phaseDescription}`
                 )
-                console.log(phase.description)
-                const weekDescription = week.description ? `: ${week.description}` : '';
+
+                let weekDescription = addSemiColonIfNeeded(week.description)
                 mdArr.push(`## Week ${weekCounter}${weekDescription}`)
                 weekCounter++;
             });

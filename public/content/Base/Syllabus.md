@@ -1,12 +1,1 @@
-# Phase 1: fdasfasdfasdf
-## Week 1: d11111111111111111111
-- css/accessibility
-## Week 2
-- css/css-architecture
-- css/borders
-## Week 3
-- css/colors
-- css/box-model
-# Phase 2
-## Week 4
-- css/css-frameworks
+# Phase 1: Onboarding and Fundamentals## Week 1: Developer Workflow- developer-workflow/vs-code​- developer-workflow/markdown- developer-workflow/github- developer-workflow/git- developer-workflow/command-line## Week 2: HTML- html/layout-sections- html/forms- html/emmet- html/debugging## Week 3# Phase 2## Week 4

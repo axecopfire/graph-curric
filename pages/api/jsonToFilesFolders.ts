@@ -14,12 +14,13 @@ id: ${sanitizeName(folderName + "-" + fileName)}
 };
 
 const handler = (req, res) => {
-  const reqJson = JSON.parse(req.query.json) as Record<
+  console.log(req.body)
+  const reqBody = JSON.parse(req.body) as Record<
     string,
     Record<string, string>
   >;
 
-  Object.entries(reqJson).map(([folderName, fileList]) => {
+  Object.entries(reqBody.json).map(([folderName, fileList]) => {
     const folderPath = path.join(
       ROOT_CONTENT_PATH,
       "md",

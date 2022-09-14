@@ -1,7 +1,7 @@
 import fs from "fs";
 
 export default function saveFile(req, res) {
-  const { data, fileName } = req.query;
+  const { data, fileName } = JSON.parse(req.body);
 
   fs.statSync(fileName);
 

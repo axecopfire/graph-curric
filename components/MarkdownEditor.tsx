@@ -1,3 +1,5 @@
+import { contentMdToNestedJSON } from 'common/commonMdParsingUtils';
+
 const MarkdownEditor = ({ state, dispatch }) => {
   const handleTextAreaUpdate = (e) => {
     return dispatch({
@@ -7,40 +9,7 @@ const MarkdownEditor = ({ state, dispatch }) => {
   };
 
   const renderMd = () => {
-    const folderSplitRE = /\n-\s/;
-    const initialFolderWithoutNewLineRE = /-\s/;
-    const fileSplitRE = /\n\s\s-\s/;
-
-    const md = state.md.rawMd.split(folderSplitRE).reduce((acc, phase) => {
-      // Trims remove the \r all over the place
-      const fileList = phase.split(fileSplitRE).map((f) => f.trim());
-      const folderName = fileList
-        .shift()
-        .replace(initialFolderWithoutNewLineRE, "");
-
-      /**
-       * An object that looks like
-       * ```{
-       *  [title]: ${content string}
-       * }```
-       */
-      const fileObject = fileList.reduce((acc, file) => {
-        // content looks like <title>\r\n-<content>
-        const contentTitle = /.*/;
-        const hasContentRE = /\n.*/;
-        const title = file.match(contentTitle)[0];
-        const hasContent = file.match(hasContentRE);
-        const removeTitle = file.replace(contentTitle, "").trim();
-
-        return {
-          ...acc,
-          [title]: hasContent ? removeTitle : "",
-        };
-      }, {});
-
-      return { ...acc, [folderName]: fileObject };
-    }, {});
-
+    const md = contentMdToNestedJSON(state.md.rawMd);
     return dispatch({
       type: "SET_STATE",
       RenderedMd: JSON.stringify(md, null, 4),
@@ -50,10 +19,14 @@ const MarkdownEditor = ({ state, dispatch }) => {
   const handleFileSave = async (e) => {
     e.preventDefault();
     await fetch(
-      `/api/saveFile?fileName=${
-        "public" + state.md.fileName
-      }&data=${JSON.stringify(state.md.rawMd)}`
-    );
+      '/api/saveFile'
+      , {
+        method: 'POST',
+        body: JSON.stringify({
+          data: JSON.stringify(state.md.rawMd),
+          fileName: "public" + state.md.fileName
+        })
+      });
     console.log(state);
   };
 

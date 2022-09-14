@@ -1,9 +1,10 @@
 import Head from "next/head";
 import { useReducer, useEffect } from "react";
-import BaseFilesList from "components/FileList";
+import FileList from "components/FileList";
 import { ROOT_CONTENT_PATH } from "common/constants";
 import MarkdownEditor from "components/MarkdownEditor";
 import { FlowContextProvider } from "context/FlowContext";
+import { contentMdToNestedJSON } from 'common/commonMdParsingUtils';
 
 const reducer = (state, action) => {
   const { type, ...stateToSave } = action;
@@ -83,7 +84,14 @@ const MdPage = () => {
 
   const handleSaveFilesAndFolders = async () => {
     const data = await fetch(
-      `/api/jsonToFilesFolders?json=${state.RenderedMd}`
+      `/api/jsonToFilesFolders`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          // This can break really easily if not given the Content.md file
+          json: contentMdToNestedJSON(state.md.rawMd)
+        })
+      }
     ).then((r) => r.json());
   };
 
@@ -102,7 +110,7 @@ const MdPage = () => {
           }}
         >
           {state.BaseFiles && (
-            <BaseFilesList
+            <FileList
               BaseFiles={state.BaseFiles}
               handleFileListSelection={handleFileListSelection}
             />

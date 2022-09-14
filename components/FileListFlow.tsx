@@ -72,16 +72,26 @@ function Flow() {
       style={{
         width: "100vw",
         height: "500px",
-        border: "2px solid gray",
-        borderRadius: "10px",
+        display: 'flex',
+        justifyContent: 'center'
       }}
     >
-      <ReactFlow
-        nodeTypes={nodeTypes}
-        nodes={state.nodes}
-        edges={state.edges}
-        fitView
-      />
+      <div
+        style={{
+          border: "2px solid gray",
+          borderRadius: "10px",
+          width: "80vw",
+          height: '500px',
+          display: 'block'
+        }}
+      >
+        <ReactFlow
+          nodeTypes={nodeTypes}
+          nodes={state.nodes}
+          edges={state.edges}
+          fitView
+        />
+      </div>
     </div>
   );
 }

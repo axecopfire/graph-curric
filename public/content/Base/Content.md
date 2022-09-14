@@ -3,7 +3,7 @@
   - Command Line
     - Shells
   - VS Code​
-    - Markdown ​
+  - Markdown ​
   - Github
     - Github ReadMe Profile
     - Github Discussions
@@ -11,6 +11,7 @@
     - Codespaces
   - Git
     - Github CLI
+
 
 - HTML
   - Emmet
