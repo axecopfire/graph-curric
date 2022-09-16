@@ -25,9 +25,9 @@ export type SyllabusStateContextType = {
 
 type UpdateArrayItemFieldType = {
   state: SyllabusStateContextType;
-  arrayName: 'phases' | 'weeks';
+  arrayName: 'phases' | 'weeks' | 'fileList';
   field: {
-    name: 'description' | 'phaseId';
+    name: 'description' | 'phaseId' | 'week';
     value: string | number;
   };
   index: number;
@@ -116,6 +116,17 @@ const reducer = (state, action): SyllabusStateContextType => {
           index: action.index
         })
       }
+    case 'DEALLOCATE_WEEK_IN_FILELIST': {
+      const fileIndex = state.fileList.findIndex(
+        (file) => file.fileName === action.fileName
+      );
+      const updateFileList = [...state.fileList];
+      delete updateFileList[fileIndex].week;
+      return {
+        ...state,
+        fileList: updateFileList
+      }
+    }
     default:
       return state;
   }

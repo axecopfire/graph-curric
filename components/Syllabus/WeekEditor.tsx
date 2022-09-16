@@ -37,5 +37,14 @@ export default function WeekEditorComponent({ week, i }: { week: SyllabusWeekTyp
         }}
             disabled={state.weekCapacity - totalOfAllocatedWeeks < 0}
         >- week</button>
+        <ul>
+            {state.fileList.filter(file => file.week - 1 === i).map((file) => <li key={file.fileName}>{file.fileName.replace("public/content/md/", "")}<button onClick={(e) => {
+                e.preventDefault()
+                dispatch({
+                    type: 'DEALLOCATE_WEEK_IN_FILELIST',
+                    fileName: file.fileName
+                })
+            }}>-</button></li>)}
+        </ul>
     </fieldset>
 }
