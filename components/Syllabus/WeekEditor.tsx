@@ -14,16 +14,13 @@ export default function WeekEditorComponent({
   const { totalOfAllocatedWeeks } = useSyllabusTotals();
   const [initialText, setInitialText] = useState("");
   const [displayModal, setDisplayModal] = useState(false);
-  const baseReadmeLocation = `${state.selectedCurriculum.replace(
-    "public",
-    ""
-  )}/Week-${i + 1}.md`;
+  const baseReadmeLocation = `${state.selectedCurriculum}/Week-${i + 1}.md`;
   const loaded = useRef(null);
 
   useEffect(() => {
     const getData = async () => {
-      const data = await fetch(baseReadmeLocation).then((r) =>
-        r.status === 200 ? r.text() : ""
+      const data = await fetch(baseReadmeLocation.replace("public", "")).then(
+        (r) => (r.status === 200 ? r.text() : "")
       );
       setInitialText(data);
     };
@@ -62,6 +59,7 @@ export default function WeekEditorComponent({
       >
         - week
       </button>
+      <br />
       <button
         onClick={(e) => {
           e.preventDefault();
