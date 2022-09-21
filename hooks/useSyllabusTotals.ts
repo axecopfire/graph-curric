@@ -12,6 +12,10 @@ export default function useSyllabusTotals() {
 
 
 
+    /**
+     * This function wipes all state.
+     * You'll need to readd any state that needs to persist
+     */
     const setInitialStateFromSyllabusAndFileList = (syllabus, fileList) => {
         // https://stackoverflow.com/a/21712066
         const syllabusArr = syllabus.split(/\r?\n|\r|\n/g);
@@ -87,11 +91,11 @@ export default function useSyllabusTotals() {
 
         dispatch({
             type: 'SET_STATE',
-            fileList: [...resultStateFileList]
+            fileList: resultStateFileList
         });
     }
 
-    const handleSyllabusText = async (syllabusText, updateSyllabus) => {
+    const handleSyllabusText = async (curriculum, updateSyllabus) => {
         const mdArr = [];
         let weekCounter = 1;
 
@@ -136,7 +140,8 @@ export default function useSyllabusTotals() {
         if (updateSyllabus) {
             await fetch('/api/saveSyllabus', {
                 method: 'POST',
-                body: toSave
+                body: JSON.stringify({ fileContent: toSave, curriculum })
+
             })
         }
         return toSave

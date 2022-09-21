@@ -1,9 +1,9 @@
 import fs from 'fs';
 
-function handler (req, res) {
-    const mdFile = req.body;
+function handler(req, res) {
+    const { fileContent, curriculum } = JSON.parse(req.body);
 
-    fs.writeFileSync('public/content/Base/Syllabus.md', mdFile);
+    fs.writeFileSync(curriculum, fileContent);
 
     return res.send('All good');
 }

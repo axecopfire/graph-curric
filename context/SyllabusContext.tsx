@@ -72,6 +72,8 @@ type ActionType = {
   field?: FieldType;
   fileName?: string;
   selectedCurriculum?: string;
+  weekCapacity?: number;
+  fileList?: GetRenderFileListReturnType;
 }
 
 const reducer = (state: SyllabusStateContextType, action: ActionType): SyllabusStateContextType => {
@@ -86,11 +88,13 @@ const reducer = (state: SyllabusStateContextType, action: ActionType): SyllabusS
   // NOTE: When adding a new array, register it with arrayName
   const arrayName = getArrayName(skipActions, action.type);
 
+  // NOTE: When registering new action check to make sure it needs to get added to a RESET_STATE override
+
   switch (action.type) {
     case "SET_STATE":
       return { ...state, ...stateToSave };
     case 'RESET_STATE':
-      return initialContext
+      return { ...initialContext, selectedCurriculum: state.selectedCurriculum }
     case 'ADD_PHASE': {
       const tmpArr = [...state.phases, { description: action.description ? action.description : '' }];
       return {

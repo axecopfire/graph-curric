@@ -1,4 +1,5 @@
-import { reMatchHeading, getFileListFromSyllabus, renderRawMd } from 'common/commonBrowserUtils';
+import { renderRawMd } from 'common/commonBrowserUtils';
+import { reMatchHeading, getFileListFromSyllabus } from 'components/Syllabus/syllabusBrowserUtils'
 import { getStaticMd } from 'common/commonApiUtils';
 import fs from 'fs';
 // Validate format
@@ -38,7 +39,7 @@ describe('Validate Syllabus', () => {
     let syllabus;
     let renderedFileList;
     beforeAll(async () => {
-        syllabus = fs.readFileSync('public/content/Base/Syllabus.md').toString();
+        syllabus = fs.readFileSync('public/content/Base/web-curriculum/Syllabus.md').toString();
         const syllabusFileList = getFileListFromSyllabus(syllabus);
         const staticMd = await getStaticMd('public/content/md/', syllabusFileList);
         renderedFileList = await renderRawMd(staticMd);

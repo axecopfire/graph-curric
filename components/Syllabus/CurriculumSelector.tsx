@@ -14,6 +14,7 @@ export default function CurriculumSelector() {
                 setCurriculumList([...curriculumList, ...data]);
             }
             getData();
+            console.log('hello')
         }
 
     }, []);

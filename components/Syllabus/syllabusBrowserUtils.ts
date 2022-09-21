@@ -49,8 +49,8 @@ export const getFileListFromSyllabus = (syllabus: string) => {
 }
 
 
-export const getSyllabusState = async () => {
-    const getSyllabus = await fetch('/content/Base/Syllabus.md')
+export const getSyllabusState = async (selectedSyllabus) => {
+    const getSyllabus = await fetch(selectedSyllabus)
         .then(r => r.text());
     const fileList = await getRenderFileList();
     // https://regex101.com/r/AIQf0C/1

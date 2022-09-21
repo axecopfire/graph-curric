@@ -14,7 +14,6 @@ const BaseSyllabusComponent = ({ initialState }) => {
   const { totalOfAllocatedWeeks, setInitialStateFromSyllabusAndFileList, handleSyllabusText } = useSyllabusTotals();
   const [renderedSyllabus, setRenderedSyllabus] = useState('');
 
-
   /** 
    * This could be done in pre-rendering
    * When I tried `getStaticProps` I got an error message complaining about the URL get. (needs to be an absolute path)
@@ -24,19 +23,23 @@ const BaseSyllabusComponent = ({ initialState }) => {
   */
   useEffect(() => {
     const getData = async () => {
-      const { syllabusText, fileList } = await getSyllabusState();
+      const root = state.selectedCurriculum.replace('public', '')
+
+      const syllabusFilePath = `${root}/Syllabus.md`
+      const { syllabusText, fileList } = await getSyllabusState(syllabusFilePath);
       setInitialStateFromSyllabusAndFileList(syllabusText, fileList);
       setRenderedSyllabus(syllabusText);
     }
-    if (!isLoadedRef.current) {
+
+    if (state.selectedCurriculum) {
       getData();
     }
-    isLoadedRef.current = true;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+  }, [state.selectedCurriculum]);
   return (
     <>
       <CurriculumSelector />
+      {state.selectedCurriculum}
       {state.selectedCurriculum &&
         <div
           style={{
@@ -50,12 +53,12 @@ const BaseSyllabusComponent = ({ initialState }) => {
           <div>
             <button onClick={async (e) => {
               e.preventDefault();
-              const syllabusText = await handleSyllabusText(renderedSyllabus, false);
+              const syllabusText = await handleSyllabusText(`${state.selectedCurriculum}/Syllabus.md`, false);
               setRenderedSyllabus(syllabusText)
             }}>Render</button>
             <button onClick={(e) => {
               e.preventDefault();
-              handleSyllabusText(renderedSyllabus, true)
+              handleSyllabusText(`${state.selectedCurriculum}/Syllabus.md`, true)
             }}>Update Syllabus</button>
             <br />
             <br />
