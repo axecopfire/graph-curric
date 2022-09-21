@@ -1,5 +1,3 @@
-import { contentMdToNestedJSON } from 'common/commonMdParsingUtils';
-
 const MarkdownEditor = ({ state, dispatch }) => {
   const handleTextAreaUpdate = (e) => {
     return dispatch({
@@ -8,13 +6,7 @@ const MarkdownEditor = ({ state, dispatch }) => {
     });
   };
 
-  const renderMd = () => {
-    const md = contentMdToNestedJSON(state.md.rawMd);
-    return dispatch({
-      type: "SET_STATE",
-      RenderedMd: JSON.stringify(md, null, 4),
-    });
-  };
+
 
   const handleFileSave = async (e) => {
     e.preventDefault();
@@ -27,7 +19,6 @@ const MarkdownEditor = ({ state, dispatch }) => {
           fileName: "public" + state.md.fileName
         })
       });
-    console.log(state);
   };
 
   return (
@@ -49,11 +40,6 @@ const MarkdownEditor = ({ state, dispatch }) => {
             name="mdEditor"
           />
         </label>
-        {state.shouldShowRenderBaseButton && (
-          <button name="render" onClick={() => renderMd()}>
-            Render Base File to JSON
-          </button>
-        )}
         <button onClick={handleFileSave}>Write File</button>
       </form>
     </fieldset>

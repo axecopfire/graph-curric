@@ -1,0 +1,121 @@
+- Developer Workflow
+
+  - Command Line
+    - Shells
+  - VS Code​
+  - Markdown
+  - Github
+    - Github ReadMe Profile
+    - Github Discussions
+    - Github pages
+    - Codespaces
+  - Git
+    - Github CLI
+
+
+- HTML
+  - Emmet
+  - Layout Sections
+  - Forms
+  - Debugging
+- CSS
+  - Selectors
+  - Box model
+  - Colors
+  - Borders
+  - Fonts
+  - Responsive CSS
+    - Media Queries
+  - Pseudo Classes
+  - Pseudo Elements
+  - Movement
+    - Transforms
+    - Keyframes
+  - Layout
+    - Flexbox
+    - Grid
+  - CSS Variables
+  - CSS Syntax
+  - CSS Frameworks
+  - CSS Architecture
+    - SMACSS
+  - Debugging
+    - Elements tab
+    - Inspect Element
+  - Loading CSS
+    - Defer
+    - Network tab
+  - Accessibility
+    - Lighthouse tab
+    - ARIA color contrast
+- Design
+  - Laws of UX
+  - Collaborative Design
+    - Figma,Figjam
+
+- JS I
+
+  - Debug
+    - Console tab
+  - console.log
+  - Loading JS
+    - script tag
+  - variables
+  - Primitive data types
+    - string
+    - number
+    - boolean
+  - conditionals
+  - loops
+    - for,while
+  - arrays
+  - functions
+  - CRUD
+
+- JS DOM
+
+  - select element
+  - CRUD element
+  - Event listeners
+
+- JS II
+  - scope
+  - closure
+  - hoisting
+  - Array HOFs
+    - `map`
+    - `filter`
+    - `reduce`
+  - async JS
+    - Promises
+    - Callbacks
+  - AJAX requests
+  - Debug
+    - Network tab
+  - REST
+  - JSON
+    - stringify
+    - parse
+- New Javascript
+  - Babel
+  - variables
+    - `let` and `const`
+  - Arrow functions
+  - async,await
+  - object destructuring
+  - rest,spread
+  - class syntax
+  - for,of and for,in
+  - optional chaining
+- Nodejs
+  - package management
+    - npm
+    - dependencies, dev-dependencies
+    - scripts
+  - testing
+    - jest
+- Accessibility
+  - ARIA Labels
+  - Tab index
+  - keyboard navigation
+  - screenreader

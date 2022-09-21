@@ -3,7 +3,8 @@ import { getSyllabusState } from "components/Syllabus/syllabusBrowserUtils";
 import { SyllabusContextProvider, SyllabusContext } from "context/SyllabusContext";
 import ManageWeeksAndPhasesComponent from 'components/Syllabus/ManageWeeksAndPhases'
 import SyllabusListComponent from 'components/Syllabus/SyllabusList';
-import useSyllabusTotals from 'hooks/useSyllabusTotals'
+import useSyllabusTotals from 'hooks/useSyllabusTotals';
+import CurriculumSelector from 'components/Syllabus/CurriculumSelector'
 
 
 // Cause of how I'm weirdly doing context
@@ -34,53 +35,59 @@ const BaseSyllabusComponent = ({ initialState }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        width: '100%'
-      }}
-    >
-      <ManageWeeksAndPhasesComponent />
-      <div>
-        <button onClick={async (e) => {
-          e.preventDefault();
-          const syllabusText = await handleSyllabusText(renderedSyllabus, false);
-          setRenderedSyllabus(syllabusText)
-        }}>Render</button>
-        <button onClick={(e) => {
-          e.preventDefault();
-          handleSyllabusText(renderedSyllabus, true)
-        }}>Update Syllabus</button>
-        <br />
-        <br />
-        <textarea
-          cols={50}
-          rows={30}
-          value={renderedSyllabus}
-          onChange={e => {
-            e.preventDefault();
-            setRenderedSyllabus(e.target.value)
-          }}>
-        </textarea>
-      </div>
-      {state.weekCapacity - totalOfAllocatedWeeks === 0 &&
-        <>
-          <div style={{
-            display: 'flex'
-          }}>
-            <form>
-              Unallocated
-              <SyllabusListComponent allocated={false} />
-            </form>
-            <form>
-              Allocated
-              <SyllabusListComponent allocated={true} />
-            </form>
+    <>
+      <CurriculumSelector />
+      {state.selectedCurriculum &&
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            width: '100%'
+          }}
+        >
+
+          <ManageWeeksAndPhasesComponent />
+          <div>
+            <button onClick={async (e) => {
+              e.preventDefault();
+              const syllabusText = await handleSyllabusText(renderedSyllabus, false);
+              setRenderedSyllabus(syllabusText)
+            }}>Render</button>
+            <button onClick={(e) => {
+              e.preventDefault();
+              handleSyllabusText(renderedSyllabus, true)
+            }}>Update Syllabus</button>
+            <br />
+            <br />
+            <textarea
+              cols={50}
+              rows={30}
+              value={renderedSyllabus}
+              onChange={e => {
+                e.preventDefault();
+                setRenderedSyllabus(e.target.value)
+              }}>
+            </textarea>
           </div>
-        </>
+          {state.weekCapacity - totalOfAllocatedWeeks === 0 &&
+            <>
+              <div style={{
+                display: 'flex'
+              }}>
+                <form>
+                  Unallocated
+                  <SyllabusListComponent allocated={false} />
+                </form>
+                <form>
+                  Allocated
+                  <SyllabusListComponent allocated={true} />
+                </form>
+              </div>
+            </>
+          }
+        </div>
       }
-    </div>
+    </>
   );
 };
 

@@ -10,7 +10,8 @@ export const initialContext = {
   phases: [],
   weeks: [],
   weekCapacity: 1,
-  fileList: []
+  fileList: [],
+  selectedCurriculum: ''
 };
 
 export type SyllabusWeekType = { description: string; phaseId: number; }
@@ -19,17 +20,19 @@ export type SyllabusStateContextType = {
   phases: { description: string; }[];
   weeks: SyllabusWeekType[]
   weekCapacity: number;
-  fileList: GetRenderFileListReturnType
+  fileList: GetRenderFileListReturnType,
+  selectedCurriculum: string;
 }
 
+type FieldType = {
+  name: 'description' | 'phaseId' | 'week';
+  value: string | number;
+};
 
 type UpdateArrayItemFieldType = {
   state: SyllabusStateContextType;
   arrayName: 'phases' | 'weeks' | 'fileList';
-  field: {
-    name: 'description' | 'phaseId' | 'week';
-    value: string | number;
-  };
+  field: FieldType;
   index: number;
 }
 const updateArrayItemField = ({ state, arrayName, field, index }: UpdateArrayItemFieldType) => {
@@ -42,11 +45,7 @@ const updateArrayItemField = ({ state, arrayName, field, index }: UpdateArrayIte
 }
 
 
-const getArrayName = (type) => {
-  const skipActions = [
-    'SET_STATE',
-    'RESET_STATE'
-  ]
+const getArrayName = (skipActions, type) => {
   if (skipActions.includes(type)) return;
   if (type.includes('PHASE')) return 'phases';
   if (type.includes('WEEK')) return 'weeks';
@@ -65,9 +64,27 @@ const removePhase = (index, state) => {
   }
 }
 
-const reducer = (state, action): SyllabusStateContextType => {
+type ActionType = {
+  type: 'SET_STATE' | 'RESET_STATE' | 'ADD_PHASE' | 'ADD_WEEK' | 'REMOVE_WEEK' | 'REMOVE_PHASE' | 'UPDATE_PHASES_ARRAY' | 'UPDATE_WEEKS_ARRAY' | 'DEALLOCATE_WEEK_IN_FILELIST' | 'SET_SELECTED_CURRICULUM';
+  description?: string;
+  phaseId?: number;
+  index?: number;
+  field?: FieldType;
+  fileName?: string;
+  selectedCurriculum?: string;
+}
+
+const reducer = (state: SyllabusStateContextType, action: ActionType): SyllabusStateContextType => {
   const { type, ...stateToSave } = action;
-  const arrayName = getArrayName(action.type);
+  // NOTE: When adding a new action that's not an array
+  // Register it in skipAction
+  const skipActions = [
+    'SET_STATE',
+    'RESET_STATE',
+    'SET_SELECTED_CURRICULUM'
+  ]
+  // NOTE: When adding a new array, register it with arrayName
+  const arrayName = getArrayName(skipActions, action.type);
 
   switch (action.type) {
     case "SET_STATE":
@@ -127,6 +144,11 @@ const reducer = (state, action): SyllabusStateContextType => {
         fileList: updateFileList
       }
     }
+    case 'SET_SELECTED_CURRICULUM':
+      return {
+        ...state,
+        selectedCurriculum: action.selectedCurriculum
+      }
     default:
       return state;
   }
@@ -134,7 +156,7 @@ const reducer = (state, action): SyllabusStateContextType => {
 
 const SyllabusContext = createContext<{
   state: SyllabusStateContextType;
-  dispatch: React.Dispatch<any>;
+  dispatch: React.Dispatch<ActionType>;
 }>({ state: initialContext, dispatch: () => null });
 
 function SyllabusContextProvider({ children }) {

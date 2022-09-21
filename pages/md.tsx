@@ -95,6 +95,14 @@ const MdPage = () => {
     ).then((r) => r.json());
   };
 
+  const renderMd = () => {
+    const md = contentMdToNestedJSON(state.md.rawMd);
+    return dispatch({
+      type: "SET_STATE",
+      RenderedMd: JSON.stringify(md, null, 4),
+    });
+  };
+
   return (
     <>
       <Head>
@@ -114,6 +122,11 @@ const MdPage = () => {
               BaseFiles={state.BaseFiles}
               handleFileListSelection={handleFileListSelection}
             />
+          )}
+          {state.shouldShowRenderBaseButton && (
+            <button name="render" onClick={() => renderMd()}>
+              Render Base File to JSON
+            </button>
           )}
           <MarkdownEditor state={state} dispatch={dispatch} />
 
