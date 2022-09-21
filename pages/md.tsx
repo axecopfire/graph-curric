@@ -2,9 +2,56 @@ import Head from "next/head";
 import { useReducer, useEffect } from "react";
 import FileList from "components/FileList";
 import { ROOT_CONTENT_PATH } from "common/constants";
-import MarkdownEditor from "components/MarkdownEditor";
 import { FlowContextProvider } from "context/FlowContext";
 import { contentMdToNestedJSON } from 'common/commonMdParsingUtils';
+
+const MarkdownEditor = ({ state, dispatch }) => {
+  const handleTextAreaUpdate = (e) => {
+    return dispatch({
+      type: "SET_MD",
+      payload: e.target.value,
+    });
+  };
+
+
+
+  const handleFileSave = async (e) => {
+    e.preventDefault();
+    await fetch(
+      '/api/saveFile'
+      , {
+        method: 'POST',
+        body: JSON.stringify({
+          data: JSON.stringify(state.md.rawMd),
+          fileName: "public" + state.md.fileName
+        })
+      });
+  };
+
+  return (
+    <fieldset
+      style={{
+        width: "25%",
+      }}
+    >
+      <legend>Markdown builder</legend>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <label>
+          Editor
+          <br />
+          <textarea
+            onChange={(e) => handleTextAreaUpdate(e)}
+            cols={50}
+            rows={30}
+            value={state.md.rawMd}
+            name="mdEditor"
+          />
+        </label>
+        <button onClick={handleFileSave}>Write File</button>
+      </form>
+    </fieldset>
+  );
+};
 
 const reducer = (state, action) => {
   const { type, ...stateToSave } = action;
