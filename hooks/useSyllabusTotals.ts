@@ -53,7 +53,7 @@ export default function useSyllabusTotals() {
 
       // Add week related state
       else if (heading === "week") {
-        const headingMatch = str.match(/\d/);
+        const headingMatch = str.match(/\d+/);
         const description = cleanDescription(str.match(/:.*/));
 
         if (!headingMatch) {
@@ -76,6 +76,7 @@ export default function useSyllabusTotals() {
         });
       } else if (heading === "subject") {
         const subjectFileName = str.replace("- ", "public/content/md/") + ".md";
+
         const fileIndex = resultStateFileList.findIndex(
           (file) => file.fileName == subjectFileName
         );

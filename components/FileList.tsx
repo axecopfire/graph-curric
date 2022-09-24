@@ -143,8 +143,6 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
 
     const data = await renderedFileListToFlow(renderedMd);
 
-    console.log({ renderedFileListToFlow });
-
     flowDispatch({
       type: "SET_NODES",
       payload: [...data.nodes],

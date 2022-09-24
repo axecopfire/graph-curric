@@ -37,12 +37,14 @@ const BaseSyllabusComponent = ({ initialState }) => {
       );
       setInitialStateFromSyllabusAndFileList(syllabusText, fileList);
       setRenderedSyllabus(syllabusText);
+      console.log({ state });
     };
 
     if (state.selectedCurriculum) {
       getData();
     }
   }, [state.selectedCurriculum]);
+
   return (
     <>
       <CurriculumSelector />
