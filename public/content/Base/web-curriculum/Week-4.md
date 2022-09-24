@@ -1,9 +1,9 @@
-# Week 5 - Accessibility
+# Week 4 - Accessibility
 
 ## Goals 🌟
 When this week is complete, we will learn how to build and improve accessible web pages and apps. 
 
-In Week 5, were going to:
+In Week 4, were going to:
 
 - understand how Accessibility benefits all users. 
 - explore how people with disabilities perceive, understand, navigate, and interact with the Web.

@@ -1,5 +1,4 @@
 - Developer Workflow
-
   - Command Line
     - Shells
   - VS Code​
@@ -11,8 +10,6 @@
     - Codespaces
   - Git
     - Github CLI
-
-
 - HTML
   - Emmet
   - Layout Sections
@@ -52,9 +49,12 @@
   - Laws of UX
   - Collaborative Design
     - Figma,Figjam
-
+- Accessibility
+  - ARIA Labels
+  - Tab index
+  - keyboard navigation
+  - screenreader
 - JS I
-
   - Debug
     - Console tab
   - console.log
@@ -71,13 +71,10 @@
   - arrays
   - functions
   - CRUD
-
 - JS DOM
-
   - select element
   - CRUD element
   - Event listeners
-
 - JS II
   - scope
   - closure
@@ -108,14 +105,18 @@
   - for,of and for,in
   - optional chaining
 - Nodejs
-  - package management
-    - npm
-    - dependencies, dev-dependencies
-    - scripts
-  - testing
-    - jest
-- Accessibility
-  - ARIA Labels
-  - Tab index
-  - keyboard navigation
-  - screenreader
+  - npm
+  - dependencies
+  - scripting
+  - process
+  - path
+  - fs
+  - Jest testing
+- Framework
+  - create next app
+  - api routes
+  - useState
+  - useEffect
+  - useRef
+  - useContext
+  - useReducer

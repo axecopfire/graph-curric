@@ -1,7 +1,7 @@
-# Week 6 - UX and UX Tools
+# Week 5 - UX and UX Tools
 
 ## Goals 🌟
-In Week 6, were going to:
+In Week 5, were going to:
 
 - understand the principles and concepts of User Experience Design. 
 - learn how to use Figma to create a design system.
