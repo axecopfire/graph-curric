@@ -120,3 +120,8 @@
   - useRef
   - useContext
   - useReducer
+  - conditional rendering
+  - event listeners
+  - jsx
+  - lists
+  - props
