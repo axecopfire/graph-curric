@@ -14,15 +14,21 @@ describe("Check markdown files", () => {
         const result = {
           fileName: file.fileName,
           error: [],
+          success: [],
         };
         if (!file.renderedMd) {
           result.error.push({ statusCode: 204, message: "no rendered md" });
+        } else {
+          // There was a bug where results were always empty
+          // Something down the line broke and no files were getting processed
+          // Can add checks to ensure that results are always populated
+          result.success.push({ file });
         }
         return result;
       })
     );
 
-    console.log({ JestMdTestResults: JSON.stringify(fileResults) });
+    console.log(`{"JestMdTestResults": ${JSON.stringify(fileResults)}}`);
 
     let failedTest = false;
     fileResults.map((file) => {
@@ -34,6 +40,6 @@ describe("Check markdown files", () => {
     });
 
     expect(failedTest).toEqual(false);
-    expect(1).toEqual(1);
+    expect(1).toEqual(2);
   });
 });

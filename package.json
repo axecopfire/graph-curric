@@ -13,7 +13,7 @@
     "test:syllabus": "yarn _ && yarn test tests/repoTest.test.ts",
     "test:watch": "jest --watch",
     "test:md:coverage": "jest test --coverage && istanbul report --include coverage/coverage-final.json text > coverage/istanbul.txt",
-    "test:md": "jest test --json  --outputFile=coverage/jestResults.json --coverage && istanbul report --include coverage/coverage-final.json text > coverage/istanbul.txt"
+    "test:md": "jest ./tests/validateContent.test.ts --json  --outputFile=coverage/jestResults.json --coverage && istanbul report --include coverage/coverage-final.json text > coverage/istanbul.txt"
   },
   "dependencies": {
     "babel-jest": "^28.1.3",

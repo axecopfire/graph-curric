@@ -44,15 +44,22 @@ const handler = async (req, res) => {
   // const jestReport = await getAndParseReport("coverage/jestResults.json", true);
   // const coverageReport = await getAndParseReport("coverage/istanbul.txt");
 
-  //
-  testResults = JSON.parse(
-    testResults
-      .match(/JestMdTestResults.*/)[0]
-      .replace(/JestMdTestResults:\s/, "")
-      .slice(1, -1)
-  ); // Removes first/last character, which are '
+  /**
+   * The JestMdTestResults can be found in the `validateContent.test.ts`
+   * It shows up in this file as a string that says `console.log` something
+   * So we pull out just the results using this regex (which is pretty flimsy and prone to break)
+   */
+  const cleanedTestResults = testResults.match(/{"JestMdTestResults.*/)[0];
+  let response;
+  try {
+    response = JSON.parse(cleanedTestResults);
+    console.log("Test Results are successfully parseable");
+  } catch (error) {
+    console.log("Failed to parse JSON test results");
+    console.error(error);
+  }
 
-  return res.status(200).json({ testResults });
+  return res.status(200).json({ testResults: response.JestMdTestResults });
 };
 
 export default handler;

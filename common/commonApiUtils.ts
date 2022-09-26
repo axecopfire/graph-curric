@@ -6,10 +6,9 @@ import { ROOT_CONTENT_PATH } from "common/constants";
 
 export type RawMdDataType = { fileName: string; rawMd: string }[];
 
-
 export const getFileList = (
   root = ROOT_CONTENT_PATH,
-  suffix = ''
+  suffix = ""
 ): Promise<string[]> =>
   new Promise((resolve, reject) =>
     glob(
@@ -21,19 +20,19 @@ export const getFileList = (
 
 export const getMarkdownFileNames = (
   root = ROOT_CONTENT_PATH
-): Promise<string[]> => getFileList(root, '.md')
+): Promise<string[]> => getFileList(root, ".md");
 
 export const getStaticMd = async (root?: string, fileList = []) => {
   const result: RawMdDataType = [];
   const cwd = process.cwd();
   let fileNames = [];
-  if (fileList) {
+  if (fileList.length) {
     fileNames = fileList;
     if (root) {
-      fileNames = fileNames.map(f => root + f);
+      fileNames = fileNames.map((f) => root + f);
     }
   } else {
-    fileNames = await getMarkdownFileNames(root)
+    fileNames = await getMarkdownFileNames(root);
   }
 
   for (const fileName of fileNames) {

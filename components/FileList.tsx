@@ -173,6 +173,7 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     const data = await fetch(
       `/api/validateMdFiles?files=${JSON.stringify(BaseFiles)}`
     ).then((r) => r.json());
+    console.log({ data });
 
     const testResults = data.testResults.reduce((acc, file) => {
       const { fileName, ...result } = file;
