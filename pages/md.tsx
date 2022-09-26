@@ -3,7 +3,7 @@ import { useReducer, useEffect } from "react";
 import FileList from "components/FileList";
 import { ROOT_CONTENT_PATH } from "common/constants";
 import { FlowContextProvider } from "context/FlowContext";
-import { contentMdToNestedJSON } from 'common/commonMdParsingUtils';
+import { contentMdToNestedJSON } from "common/commonMdParsingUtils";
 
 const MarkdownEditor = ({ state, dispatch }) => {
   const handleTextAreaUpdate = (e) => {
@@ -13,25 +13,23 @@ const MarkdownEditor = ({ state, dispatch }) => {
     });
   };
 
-
-
   const handleFileSave = async (e) => {
     e.preventDefault();
-    await fetch(
-      '/api/saveFile'
-      , {
-        method: 'POST',
-        body: JSON.stringify({
-          data: JSON.stringify(state.md.rawMd),
-          fileName: "public" + state.md.fileName
-        })
-      });
+    await fetch("/api/saveFile", {
+      method: "POST",
+      body: JSON.stringify({
+        data: JSON.stringify(state.md.rawMd),
+        fileName: "public" + state.md.fileName,
+      }),
+    });
   };
 
   return (
     <fieldset
       style={{
         width: "25%",
+        position: "fixed",
+        right: "0",
       }}
     >
       <legend>Markdown builder</legend>
@@ -108,6 +106,7 @@ const MdPage = () => {
   const handleFileListSelection = async (selection) => {
     const fileName = selection.replace("public", "");
     const data = await fetch(fileName).then((r) => r.text());
+
     if (selection.includes(ROOT_CONTENT_PATH + "Base")) {
       return dispatch({
         type: "SET_STATE",
@@ -130,16 +129,13 @@ const MdPage = () => {
   };
 
   const handleSaveFilesAndFolders = async () => {
-    const data = await fetch(
-      `/api/jsonToFilesFolders`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          // This can break really easily if not given the Content.md file
-          json: contentMdToNestedJSON(state.md.rawMd)
-        })
-      }
-    ).then((r) => r.json());
+    const data = await fetch(`/api/jsonToFilesFolders`, {
+      method: "POST",
+      body: JSON.stringify({
+        // This can break really easily if not given the Content.md file
+        json: contentMdToNestedJSON(state.md.rawMd),
+      }),
+    }).then((r) => r.json());
   };
 
   const renderMd = () => {

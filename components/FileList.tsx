@@ -27,7 +27,8 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
 
   const handleClick = (e, filePath) => {
     e.preventDefault();
-    return handleFileListSelection(ROOT_CONTENT_PATH.slice(0, -1) + filePath);
+    const fileLocation = ROOT_CONTENT_PATH.slice(0, -1) + filePath;
+    return handleFileListSelection(fileLocation);
   };
 
   const handleCreateReadmeClick = async (e) => {
@@ -173,7 +174,6 @@ const FileList = ({ BaseFiles, handleFileListSelection }) => {
     const data = await fetch(
       `/api/validateMdFiles?files=${JSON.stringify(BaseFiles)}`
     ).then((r) => r.json());
-    console.log({ data });
 
     const testResults = data.testResults.reduce((acc, file) => {
       const { fileName, ...result } = file;
