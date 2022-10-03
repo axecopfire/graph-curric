@@ -30,6 +30,8 @@ const MarkdownEditor = ({ state, dispatch }) => {
         width: "25%",
         position: "fixed",
         right: "0",
+        zIndex: 1000,
+        background: "rgba(0, 0, 0, 0.5)",
       }}
     >
       <legend>Markdown builder</legend>
@@ -166,19 +168,22 @@ const MdPage = () => {
               handleFileListSelection={handleFileListSelection}
             />
           )}
-          {state.shouldShowRenderBaseButton && (
+          {/* {state.shouldShowRenderBaseButton && (
             <button name="render" onClick={() => renderMd()}>
               Render Base File to JSON
             </button>
-          )}
+          )} */}
           <MarkdownEditor state={state} dispatch={dispatch} />
 
-          <pre>{state.RenderedMd}</pre>
-          {state.shouldShowRenderBaseButton && (
-            <button onClick={() => handleSaveFilesAndFolders()}>
-              Save to Files and folders
-            </button>
-          )}
+          {/* <pre>{state.RenderedMd}</pre> */}
+          {/* ACTION LIST */}
+          <div>
+            {state.shouldShowRenderBaseButton && (
+              <button onClick={() => handleSaveFilesAndFolders()}>
+                Save to Files and folders
+              </button>
+            )}
+          </div>
         </main>
       </FlowContextProvider>
     </>
