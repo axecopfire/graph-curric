@@ -1,13 +1,21 @@
 ---
 id: curriculum
 title: Curriculum
----# [css](md/css)
+---# [accessibility](md/accessibility)
+
+---
+id: curriculum
+title: Curriculum
+---- [aria-labels](md/accessibility/aria-labels.md)
+- [keyboard-navigation](md/accessibility/keyboard-navigation.md)
+- [screenreader](md/accessibility/screenreader.md)
+- [tab-index](md/accessibility/tab-index.md)
+# [css](md/css)
 
 ---
 id: curriculum
 title: Curriculum
 ---- [accessibility](md/css/accessibility.md)
-- [borders](md/css/borders.md)
 - [box-model](md/css/box-model.md)
 - [colors](md/css/colors.md)
 - [css-architecture](md/css/css-architecture.md)
@@ -38,6 +46,7 @@ title: Curriculum
 ---- [command-line](md/developer-workflow/command-line.md)
 - [git](md/developer-workflow/git.md)
 - [github](md/developer-workflow/github.md)
+- [markdown](md/developer-workflow/markdown.md)
 - [vs-code​](md/developer-workflow/vs-code​.md)
 # [html](md/html)
 
@@ -57,6 +66,24 @@ title: Curriculum
 - [event-listeners](md/js-dom/event-listeners.md)
 - [event-listteners](md/js-dom/event-listteners.md)
 - [select-element](md/js-dom/select-element.md)
+# [js-framework](md/js-framework)
+
+---
+id: curriculum
+title: Curriculum
+---- [api-routes](md/js-framework/api-routes.md)
+- [conditional-rendering](md/js-framework/conditional-rendering.md)
+- [create-next app](md/js-framework/create-next app.md)
+- [create-next-app](md/js-framework/create-next-app.md)
+- [event-listeners](md/js-framework/event-listeners.md)
+- [jsx](md/js-framework/jsx.md)
+- [lists](md/js-framework/lists.md)
+- [props](md/js-framework/props.md)
+- [usecontext](md/js-framework/usecontext.md)
+- [useeffect](md/js-framework/useeffect.md)
+- [usereducer](md/js-framework/usereducer.md)
+- [useref](md/js-framework/useref.md)
+- [usestate](md/js-framework/usestate.md)
 # [js-i](md/js-i)
 
 ---
@@ -105,5 +132,12 @@ title: Curriculum
 ---
 id: curriculum
 title: Curriculum
----- [package-management](md/nodejs/package-management.md)
+---- [dependencies](md/nodejs/dependencies.md)
+- [fs](md/nodejs/fs.md)
+- [jest-testing](md/nodejs/jest-testing.md)
+- [npm](md/nodejs/npm.md)
+- [package-management](md/nodejs/package-management.md)
+- [path](md/nodejs/path.md)
+- [process](md/nodejs/process.md)
+- [scripting](md/nodejs/scripting.md)
 - [testing](md/nodejs/testing.md)
