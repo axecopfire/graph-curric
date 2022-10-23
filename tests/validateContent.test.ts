@@ -40,6 +40,6 @@ describe("Check markdown files", () => {
     });
 
     expect(failedTest).toEqual(false);
-    expect(1).toEqual(2);
+    // expect(1).toEqual(2);
   });
 });
